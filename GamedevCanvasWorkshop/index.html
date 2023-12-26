@@ -54,6 +54,9 @@
         // スコアの設定
         let score = 0;
 
+        // ライフの設定
+        let lives = 3;
+
         // ブロックの初期化
         const bricks = [];
         for (let c = 0; c < brickColumnCount; c++) {
@@ -85,6 +88,7 @@
             drawBricks();
             drawPaddle();
             drawScore();
+            drawLives();
             collisionDetection();
             x += dx;
             y += dy;
@@ -102,9 +106,17 @@
                     dx = dx * 1.05;
                     dy = dy * 1.05;
                 } else {
-                    alert("GAME OVER");
-                    document.location.reload();
-                    clearInterval(interval);
+                    lives--;
+                    if (!lives) {
+                        alert("GAME OVER");
+                        document.location.reload();
+                    } else {
+                        x = canvas.width / 2;
+                        y = canvas.height - 30;
+                        dx = 2;
+                        dy = -2;
+                        paddleX = (canvas.width - paddleWidth) / 2;
+                    }
                 }
             }
 
@@ -114,6 +126,8 @@
             } else if (leftPressed) {
                 paddleX = Math.max(paddleX - 7, 0);
             }
+
+            requestAnimationFrame(draw);
         }
         document.addEventListener("keydown", keyDownHandler, false);
         document.addEventListener("keyup", keyUpHandler, false);
@@ -155,7 +169,6 @@
                             if (score === brickRowCount * brickColumnCount) {
                                 alert("YOU WIN, CONGRATULATIONS!" + "\n" + "Score: " + score);
                                 document.location.reload();
-                                clearInterval(interval);
                             }
                         }
                     }
@@ -168,6 +181,13 @@
             ctx.fillStyle = "#0095DD";
             ctx.fillText("Score: " + score, 8, 20);
         }
+
+        function drawLives() {
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#0095DD";
+            ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
+        }
+
 
         function drawBricks() {
             for (let c = 0; c < brickColumnCount; c++) {
@@ -188,7 +208,7 @@
         }
 
 
-        const interval = setInterval(draw, 10);
+        draw();
 
     </script>
 </body>
