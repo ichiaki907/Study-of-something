@@ -93,11 +93,11 @@
                 fillStyle = "#" + Math.floor(Math.random() * 16777216).toString(16);
             }
 
-
+            // ボールが上下に跳ね返る
             if (y + dy < ballRadius) {
                 dy = -dy;
             } else if (y + dy > canvas.height - ballRadius) {
-                if (x > paddleX && x < paddleX + paddleWidth) {
+                if (x > paddleX - 3 && x < paddleX + 3 + paddleWidth) {
                     dy = -dy;
                     dx = dx * 1.05;
                     dy = dy * 1.05;
