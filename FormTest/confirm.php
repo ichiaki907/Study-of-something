@@ -2,9 +2,9 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // フォームデータを取得する
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $message = $_POST['message'];
+  $name = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8');
+  $email = htmlspecialchars($_POST['email'], ENT_QUOTES, 'UTF-8');
+  $message = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
 
   // 確認ページを表示する
   echo "<h1>入力確認</h1>";
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   echo "<table>";
   echo "<tr><td>名前:</td><td>$name</td></tr>";
   echo "<tr><td>メールアドレス:</td><td>$email</td></tr>";
-  echo "<tr><td>メッセージ:</td><td>$message</td></tr>";
+  echo "<tr><td>メッセージ:</td><td>" . nl2br($message) . "</td></tr>";
   echo "</table>";
 
   // 送信ボタン
