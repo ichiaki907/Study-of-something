@@ -1,5 +1,5 @@
 export const ColorfulMessage = ({ color, children }) => {
-    const contentStyleA = {
+  const contentStyleA = {
     color,
     fontSize: "18px",
   };
