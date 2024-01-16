@@ -20,7 +20,7 @@ export default function Home() {
             mt={5}
             placeholder="入力してください"
           />
-          <Button backgroundColor={"coral"} mt={5}>
+          <Button backgroundColor={"blue"} color={"white"} mt={5}>
             ボタン
           </Button>
         </Box>
