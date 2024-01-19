@@ -1,6 +1,16 @@
+"use client";
+
 import { Box, Button, Heading, Textarea } from "@chakra-ui/react";
+import { useState } from "react";
 
 export default function Home() {
+  const [value, setValue] = useState("");
+  const [memo, setMemo] = useState("");
+
+  //textareaの入力でvalueが変わる
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setValue(event.target.value);
+
   return (
     <main>
       <Box backgroundColor={"white"}>
@@ -19,10 +29,29 @@ export default function Home() {
             rows={10}
             mt={5}
             placeholder="入力してください"
+            value={value}
+            onChange={handleChange}
           />
-          <Button backgroundColor={"blue"} color={"white"} mt={5}>
-            ボタン
+          <Button
+            backgroundColor={"blue"}
+            color={"white"}
+            mt={5}
+            mr={5}
+            onClick={() => setMemo(value)}
+          >
+            更新
           </Button>
+          <Button
+            backgroundColor={"red"}
+            color={"white"}
+            mt={5}
+            onClick={() => setMemo("")}
+          >
+            クリア
+          </Button>
+          <Box mt={5}>
+            <p>{memo}</p>
+          </Box>
         </Box>
       </Box>
     </main>
