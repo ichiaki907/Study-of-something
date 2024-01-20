@@ -45,7 +45,10 @@ export default function Home() {
             backgroundColor={"red"}
             color={"white"}
             mt={5}
-            onClick={() => setMemo("")}
+            onClick={() => {
+              setMemo("");
+              setValue("");
+            }}
           >
             クリア
           </Button>
