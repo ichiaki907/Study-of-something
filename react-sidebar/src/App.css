@@ -65,3 +65,12 @@
   font-weight: 600;
   font-size: 13px;
 }
+
+.sidebar-button {
+  width: 100%;
+  height: 60px;
+  background-color: #3b627a;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

@@ -24,6 +24,7 @@ const Sidebar = () => {
             </li>
           );
         })}
+        <button className="sidebar-button">サイドバーを閉じる</button>
       </ul>
     </div>
   );
