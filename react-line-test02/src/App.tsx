@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import liff from "@line/liff";
 import "./App.css";
+import { Box } from "@chakra-ui/react";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -32,7 +33,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <Box className="App">
       <h1>create-liff-app</h1>
       {message && <p>{message}</p>}
       {error && (
@@ -51,7 +52,7 @@ function App() {
       <button onClick={LineLoginhandler}>
         {isLoggedIn ? "ログアウト" : "ログイン"}
       </button>
-    </div>
+    </Box>
   );
 }
 
