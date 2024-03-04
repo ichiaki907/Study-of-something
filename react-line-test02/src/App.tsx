@@ -3,11 +3,15 @@ import liff from "@line/liff";
 import "./App.css";
 import { Box, Button, Heading, Link, Text } from "@chakra-ui/react";
 
+interface Profile {
+  displayName: string;
+}
+
 function App() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState<Profile>({ displayName: "" });
 
   useEffect(() => {
     liff
