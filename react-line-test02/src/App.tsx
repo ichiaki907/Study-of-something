@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import liff from "@line/liff";
 import "./App.css";
-import { Box, Button, Heading, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Link, Text, VStack } from "@chakra-ui/react";
 import { Header } from "./components/Header";
 
 interface Profile {
@@ -44,28 +44,28 @@ function App() {
   return (
     <Box className="App">
       <Header />
-      {message && <p className="mt-2">{message}</p>}
-      {error && (
-        <p>
-          <code>{error}</code>
-        </p>
-      )}
-      <Link
-        href="https://developers.line.biz/ja/docs/liff/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        LIFF Documentation
-      </Link>
-      <Text fontSize="xl" className="mt-2 font-bold">
-        {isLoggedIn ? "ログイン中" : "ログアウト中"}
-      </Text>
-      <Button onClick={LineLoginhandler} colorScheme="green" className="mt-2">
-        {isLoggedIn ? "ログアウト" : "ログイン"}
-      </Button>
-      <Text fontSize="xl" className="mt-2">
-        {profile.displayName}
-      </Text>
+      <VStack spacing={4} mt={4}>
+        {message && <p>{message}</p>}
+        {error && (
+          <p>
+            <code>{error}</code>
+          </p>
+        )}
+        <Link
+          href="https://developers.line.biz/ja/docs/liff/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LIFF Documentation
+        </Link>
+        <Text fontSize="xl" className="font-bold">
+          {isLoggedIn ? "ログイン中" : "ログアウト中"}
+        </Text>
+        <Button onClick={LineLoginhandler} colorScheme="green">
+          {isLoggedIn ? "ログアウト" : "ログイン"}
+        </Button>
+        <Text fontSize="xl">{profile.displayName}</Text>
+      </VStack>
     </Box>
   );
 }
