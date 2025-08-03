@@ -80,5 +80,23 @@
         </div>
     </footer>
 
+    <script>
+        const targets = document.querySelectorAll('.feature-item, #benefits li, .pricing-plan, .faq-item');
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        targets.forEach(target => {
+            target.classList.add('fade-in');
+            observer.observe(target);
+        });
+    </script>
+
 </body>
 </html>
