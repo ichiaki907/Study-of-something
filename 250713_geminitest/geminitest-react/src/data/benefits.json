@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "stampCount": 2,
+    "title": "3% OFFクーポン",
+    "condition": "スタンプ3個以上",
+    "description": "店舗スタッフに特典の利用をお申し付けください。",
+    "usageLimit": 1,
+    "isActive": true,
+    "buttonText": "特典を利用する",
+    "url": "https://example.com/coupon-3percent"
+  },
+  {
+    "id": 2,
+    "stampCount": 8,
+    "title": "コンプリート記念NFT",
+    "condition": "スタンプ8個以上",
+    "description": "条件達成後に以下の「特典を利用する」から画面移動して、NFTをお受け取りください。",
+    "usageLimit": 1,
+    "isActive": false,
+    "buttonText": "条件未達成です",
+    "url": "https://example.com/nft-reward"
+  },
+  {
+    "id": 3,
+    "stampCount": 5,
+    "title": "5% OFFクーポン",
+    "condition": "スタンプ5個以上",
+    "description": "店舗スタッフに特典の利用をお申し付けください。",
+    "usageLimit": 1,
+    "isActive": false,
+    "buttonText": "条件未達成です",
+    "url": "https://example.com/coupon-5percent"
+  }
+]

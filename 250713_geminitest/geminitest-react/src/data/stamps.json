@@ -1,0 +1,108 @@
+{
+  "locations": [
+    {
+      "id": 1,
+      "name": "渋谷スクランブル交差点とその周辺の商業施設・飲食店・エンターテイメント施設群",
+      "description": "世界で最も忙しい交差点の一つとして知られる渋谷のシンボル。巨大なビジョンボードと人々の行き交いが印象的な、東京の現代的な魅力を体感できる場所です。",
+      "address": "東京都渋谷区渋谷2-21-1",
+      "phone": "03-3463-0000",
+      "hours": "24時間営業",
+      "other": "混雑時は注意が必要です",
+      "map": "https://maps.google.com/?q=渋谷スクランブル交差点",
+      "web": "https://www.shibuya.tokyo.jp/",
+      "image": "/logo192.png",
+      "isStamped": true
+    },
+    {
+      "id": 2,
+      "name": "新宿御苑国立公園と四季折々の花々が咲き誇る美しい庭園エリア",
+      "description": "東京の中心部にある広大な公園。四季折々の花々が楽しめ、特に桜の季節は美しい景色で人気です。都会の喧騒から離れて、ゆっくりと時間を過ごすのに最適な場所です。",
+      "address": "東京都新宿区内藤町11",
+      "phone": "03-3350-0151",
+      "hours": "9:00-16:30（月曜休園）",
+      "other": "入園料：大人500円",
+      "map": "https://maps.google.com/?q=新宿御苑",
+      "web": "https://www.env.go.jp/garden/shinjukugyoen/",
+      "image": "/logo192.png",
+      "isStamped": true
+    },
+    {
+      "id": 3,
+      "name": "中野ブロードウェイとアニメ・ゲーム・フィギュアのサブカルチャー聖地",
+      "description": "アニメやゲーム、フィギュアなどのサブカルチャーの聖地。古い商店街の雰囲気を残しながら、新しいカルチャーが融合した独特な空間です。",
+      "address": "東京都中野区中野5-52-15",
+      "phone": "03-3388-7000",
+      "hours": "10:00-21:00",
+      "other": "各店舗により営業時間が異なります",
+      "map": "https://maps.google.com/?q=中野ブロードウェイ",
+      "web": "https://www.nakano-broadway.com/",
+      "image": "/logo192.png",
+      "isStamped": true
+    },
+    {
+      "id": 4,
+      "name": "品川シーサイド",
+      "description": "東京湾を望む美しい海辺のエリア。夕日が特に美しく、カップルや家族連れに人気のデートスポットです。海の風を感じながら、ゆったりとした時間を過ごせます。",
+      "address": "東京都品川区東品川4-12-8",
+      "phone": "03-3471-0111",
+      "hours": "24時間開放",
+      "other": "夕日スポットとして人気",
+      "map": "",
+      "web": "https://www.city.shinagawa.tokyo.jp/",
+      "image": "/logo192.png",
+      "isStamped": false
+    },
+    {
+      "id": 5,
+      "name": "目黒区美術館",
+      "description": "地域に根ざした美術館で、様々な展覧会が開催されています。知的好奇心を満たすことができる文化的な施設が集まるエリアです。",
+      "address": "東京都目黒区目黒2-4-36",
+      "phone": "03-3714-1201",
+      "hours": "10:00-18:00（月曜休館）",
+      "other": "展覧会により入館料が異なります",
+      "map": "https://maps.google.com/?q=目黒区美術館",
+      "web": "https://mmat.jp/",
+      "image": "/logo192.png",
+      "isStamped": true
+    },
+    {
+      "id": 6,
+      "name": "浅草寺",
+      "description": "東京最古の寺院で、雷門と五重塔が有名です。伝統的な日本の雰囲気を味わえる観光スポットとして人気があります。",
+      "address": "東京都台東区浅草2-3-1",
+      "phone": "03-3842-0181",
+      "hours": "6:00-17:00",
+      "other": "参拝は無料、おみくじは100円",
+      "map": "https://maps.google.com/?q=浅草寺",
+      "web": "https://www.senso-ji.jp/",
+      "image": "/logo192.png",
+      "isStamped": true
+    },
+    {
+      "id": 7,
+      "name": "東京スカイツリーとその周辺の商業施設・展望台・エンターテイメント施設群",
+      "description": "東京の新しいランドマーク。634mの高さを誇る電波塔で、展望台からは東京の絶景を楽しめます。",
+      "address": "東京都墨田区押上1-1-2",
+      "phone": "0570-55-0634",
+      "hours": "10:00-21:00",
+      "other": "展望台入場料：大人2,100円",
+      "map": "https://maps.google.com/?q=東京スカイツリー",
+      "web": "https://www.tokyo-skytree.jp/",
+      "image": "/logo192.png",
+      "isStamped": false
+    },
+    {
+      "id": 8,
+      "name": "上野公園",
+      "description": "桜の名所として知られる広大な公園。美術館や博物館、動物園など文化施設が集まるエリアです。",
+      "address": "東京都台東区上野公園",
+      "phone": "03-3828-5644",
+      "hours": "24時間開放",
+      "other": "公園内の施設により営業時間が異なります",
+      "map": "https://maps.google.com/?q=上野公園",
+      "web": "https://www.tokyo-park.or.jp/park/format/index037.html",
+      "image": "/logo192.png",
+      "isStamped": true
+    }
+  ]
+}
