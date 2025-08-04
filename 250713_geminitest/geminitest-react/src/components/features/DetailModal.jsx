@@ -1,41 +1,26 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 
 const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [startY, setStartY] = useState(0);
-  const [currentY, setCurrentY] = useState(0);
-  const modalRef = useRef(null);
   const { currentTheme } = useTheme();
 
-  if (!isOpen || !data) return null;
-
-  const handleTouchStart = (e) => {
-    setIsDragging(true);
-    setStartY(e.touches[0].clientY);
-    setCurrentY(e.touches[0].clientY);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-    const touchY = e.touches[0].clientY;
-    setCurrentY(touchY);
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
-
-    const deltaY = currentY - startY;
-    const threshold = 100; // 閉じるための閾値
-
-    if (deltaY > threshold) {
-      onClose();
+  // モーダルの開閉時にbodyのスクロールを制御
+  useEffect(() => {
+    if (isOpen) {
+      // モーダルが開いている時はbodyのスクロールを無効化
+      document.body.style.overflow = 'hidden';
+    } else {
+      // モーダルが閉じている時はbodyのスクロールを有効化
+      document.body.style.overflow = 'unset';
     }
 
-    setIsDragging(false);
-    setStartY(0);
-    setCurrentY(0);
-  };
+    // コンポーネントのアンマウント時にbodyのスクロールを復元
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !data) return null;
 
   // データから表示する情報を取得
   const getDisplayData = () => {
@@ -81,22 +66,7 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
       ></div>
 
       {/* フルスクリーンモーダル */}
-      <div
-        ref={modalRef}
-        className="absolute inset-0 bg-white transform transition-all duration-400 ease-out animate-slideIn"
-        style={{
-          transform: isDragging
-            ? `translateY(${Math.max(0, currentY - startY)}px)`
-            : "translateY(0)",
-          transition: isDragging ? "none" : "transform 0.3s ease-out",
-          opacity: isDragging
-            ? Math.max(0.7, 1 - (currentY - startY) / 500)
-            : 1,
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
+      <div className="absolute inset-0 bg-white transform transition-all duration-400 ease-out animate-slideIn">
         {/* 右上のバツボタン */}
         <button
           onClick={onClose}
@@ -116,15 +86,6 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
             />
           </svg>
         </button>
-
-        {/* ドラッグハンドル */}
-        <div className="flex justify-center pt-4 pb-2">
-          <div
-            className={`w-12 h-1 rounded-full transition-colors duration-200 ${
-              isDragging ? "bg-gray-500" : "bg-gray-300"
-            }`}
-          ></div>
-        </div>
 
         {/* コンテンツ */}
         <div className="flex flex-col h-full overflow-y-auto">
