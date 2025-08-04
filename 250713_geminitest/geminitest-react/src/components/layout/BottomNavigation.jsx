@@ -96,10 +96,10 @@ const BottomNavigation = ({ activeTab, onTabChange }) => {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => onTabChange(tab.id)}
+            onClick={() => onTabChange(tab.id, false)}
             className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 ${
               activeTab === tab.id
-                ? `${themeColors.primary.replace('bg-', 'text-')}`
+                ? themeColors.primaryText
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >

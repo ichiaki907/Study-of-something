@@ -34,27 +34,7 @@ const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
     type: "stamp",
   });
 
-  // スクロール位置に基づいてアクティブタブを更新する関数
-  const updateActiveTabOnScroll = () => {
-    const scrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
-
-    // 各セクションの位置を取得
-    const stampSectionTop = stampSectionRef.current?.offsetTop || 0;
-    const benefitsSectionTop = benefitsSectionRef.current?.offsetTop || 0;
-    const spotsSectionTop = spotsSectionRef.current?.offsetTop || 0;
-
-    // スクロール位置に基づいてタブを決定
-    if (scrollY < stampSectionTop - windowHeight * 0.3) {
-      setActiveTab("home");
-    } else if (scrollY < benefitsSectionTop - windowHeight * 0.3) {
-      setActiveTab("stamps");
-    } else if (scrollY < spotsSectionTop - windowHeight * 0.3) {
-      setActiveTab("benefits");
-    } else {
-      setActiveTab("spots");
-    }
-  };
+  
 
   // スタンプの状態を取得
   const stampStatus = getStampStatus();
@@ -83,6 +63,7 @@ const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
     setModalData({ isOpen: false, data: null, type: "stamp" });
   };
 
+  const homeSectionRef = useRef(null);
   const stampSectionRef = useRef(null);
   const benefitsSectionRef = useRef(null);
   const spotsSectionRef = useRef(null);
@@ -94,66 +75,74 @@ const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
     }
   }, [externalActiveTab, activeTab]);
 
-  // スクロール監視と背景色統一のためのuseEffect
   useEffect(() => {
-    // ページ全体の背景色を白に統一（最小限の設定）
-    document.documentElement.style.backgroundColor = 'white';
-    
-    // スクロールイベントリスナーを追加
-    const handleScroll = () => {
-      updateActiveTabOnScroll();
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const tabId = entry.target.dataset.tabId;
+            if (tabId) {
+              handleTabChange(tabId, true);
+            }
+          }
+        });
+      },
+      { rootMargin: "-50% 0px -50% 0px" }
+    );
+
+    const sections = [
+      { ref: homeSectionRef, id: "home" },
+      { ref: stampSectionRef, id: "stamps" },
+      { ref: benefitsSectionRef, id: "benefits" },
+      { ref: spotsSectionRef, id: "spots" },
+    ];
+
+    sections.forEach((section) => {
+      if (section.ref.current) {
+        section.ref.current.dataset.tabId = section.id;
+        observer.observe(section.ref.current);
+      }
+    });
+
     return () => {
-      document.documentElement.style.backgroundColor = '';
-      window.removeEventListener('scroll', handleScroll);
+      sections.forEach((section) => {
+        if (section.ref.current) {
+          observer.unobserve(section.ref.current);
+        }
+      });
     };
   }, []);
 
-  const handleTabChange = (tabId) => {
+  const handleTabChange = (tabId, isScroll) => {
     setActiveTab(tabId);
     if (onTabChange) {
       onTabChange(tabId);
     }
 
-    // 手動クリック時は一時的にスクロール監視を無効化
-    const handleScrollEnd = () => {
-      setTimeout(() => {
-        window.addEventListener('scroll', updateActiveTabOnScroll);
-      }, 1000); // 1秒後にスクロール監視を再開
-    };
+    if (isScroll) return;
 
-    // スクロール監視を一時的に無効化
-    window.removeEventListener('scroll', updateActiveTabOnScroll);
-
-    // 即座にスムーズスクロール
+    let targetRef;
     switch (tabId) {
       case "stamps":
-        stampSectionRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        targetRef = stampSectionRef;
         break;
       case "benefits":
-        benefitsSectionRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        targetRef = benefitsSectionRef;
         break;
       case "spots":
-        spotsSectionRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        targetRef = spotsSectionRef;
         break;
       default:
         window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
     }
 
-    // スクロール完了後に監視を再開
-    setTimeout(handleScrollEnd, 1000);
+    if (targetRef.current) {
+      targetRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   const handleButtonClick = (benefitId) => {
@@ -168,7 +157,9 @@ const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-md mx-auto bg-white shadow-lg relative min-h-screen">
-        <KeyVisual />
+        <div ref={homeSectionRef} data-tab-id="home">
+          <KeyVisual />
+        </div>
 
         {/* スタンプセクション */}
         <div

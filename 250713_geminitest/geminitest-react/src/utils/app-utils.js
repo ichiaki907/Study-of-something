@@ -129,6 +129,7 @@ export const getThemeColors = (themeColor = 'green') => {
   const colorMap = {
     green: {
       primary: 'bg-green-600',
+      primaryText: 'text-green-600',
       primaryHover: 'hover:bg-green-700',
       secondary: 'bg-emerald-500',
       secondaryHover: 'hover:bg-emerald-600',
@@ -138,6 +139,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     blue: {
       primary: 'bg-blue-600',
+      primaryText: 'text-blue-600',
       primaryHover: 'hover:bg-blue-700',
       secondary: 'bg-cyan-500',
       secondaryHover: 'hover:bg-cyan-600',
@@ -147,6 +149,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     purple: {
       primary: 'bg-purple-600',
+      primaryText: 'text-purple-600',
       primaryHover: 'hover:bg-purple-700',
       secondary: 'bg-violet-500',
       secondaryHover: 'hover:bg-violet-600',
@@ -156,6 +159,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     red: {
       primary: 'bg-red-600',
+      primaryText: 'text-red-600',
       primaryHover: 'hover:bg-red-700',
       secondary: 'bg-pink-500',
       secondaryHover: 'hover:bg-pink-600',
@@ -165,6 +169,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     orange: {
       primary: 'bg-orange-600',
+      primaryText: 'text-orange-600',
       primaryHover: 'hover:bg-orange-700',
       secondary: 'bg-amber-500',
       secondaryHover: 'hover:bg-amber-600',
@@ -174,6 +179,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     teal: {
       primary: 'bg-teal-600',
+      primaryText: 'text-teal-600',
       primaryHover: 'hover:bg-teal-700',
       secondary: 'bg-cyan-500',
       secondaryHover: 'hover:bg-cyan-600',
@@ -183,6 +189,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     indigo: {
       primary: 'bg-indigo-600',
+      primaryText: 'text-indigo-600',
       primaryHover: 'hover:bg-indigo-700',
       secondary: 'bg-blue-500',
       secondaryHover: 'hover:bg-blue-600',
@@ -192,6 +199,7 @@ export const getThemeColors = (themeColor = 'green') => {
     },
     pink: {
       primary: 'bg-pink-600',
+      primaryText: 'text-pink-600',
       primaryHover: 'hover:bg-pink-700',
       secondary: 'bg-rose-500',
       secondaryHover: 'hover:bg-rose-600',

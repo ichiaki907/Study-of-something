@@ -28,11 +28,8 @@ const HowToParticipate = () => {
   const renderIcon = (iconName) => {
     const iconData = iconMap[iconName];
     if (!iconData) {
-      console.log(`Icon not found: ${iconName}`);
       return null;
     }
-
-    console.log(`Rendering icon: ${iconName}`, iconData);
 
     return (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
