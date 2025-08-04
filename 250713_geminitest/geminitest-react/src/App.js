@@ -10,7 +10,7 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="App">
+      <div className="App bg-white min-h-screen">
         <NFTBenefitsPage />
       </div>
     </ThemeProvider>

@@ -9,6 +9,53 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: white;
+  min-height: 100vh;
+}
+
+html {
+  background-color: white;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: white;
+}
+
+/* オーバースクロール時の背景色を白に統一 */
+html, body {
+  background-color: white;
+}
+
+/* ビューポートの背景色を白に設定 */
+@viewport {
+  viewport-fit: cover;
+}
+
+/* モバイルデバイスでの背景色統一 */
+@media (max-width: 768px) {
+  html, body {
+    background-color: white;
+  }
+  
+  /* iOS Safariでのオーバースクロール背景色 */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* オーバースクロール時の背景色制御（安全な方法） */
+:root {
+  --overscroll-bg: white;
+}
+
+html {
+  background-color: var(--overscroll-bg);
+}
+
+body {
+  background-color: var(--overscroll-bg);
 }
 
 code {

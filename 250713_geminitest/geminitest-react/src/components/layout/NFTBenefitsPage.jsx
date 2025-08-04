@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import KeyVisual from "../features/KeyVisual";
 import StampProgressBar from "../ui/StampProgressBar";
 import StampDisplay from "../features/StampDisplay";
@@ -54,6 +54,16 @@ const NFTBenefitsPage = () => {
   const benefitsSectionRef = useRef(null);
   const spotsSectionRef = useRef(null);
 
+  // 背景色統一のためのuseEffect
+  useEffect(() => {
+    // ページ全体の背景色を白に統一（最小限の設定）
+    document.documentElement.style.backgroundColor = 'white';
+    
+    return () => {
+      document.documentElement.style.backgroundColor = '';
+    };
+  }, []);
+
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
 
@@ -92,8 +102,8 @@ const NFTBenefitsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto bg-white shadow-lg relative">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-md mx-auto bg-white shadow-lg relative min-h-screen">
         <KeyVisual />
 
         {/* スタンプセクション */}
@@ -247,8 +257,8 @@ const NFTBenefitsPage = () => {
           </SectionHeader>
         </div>
 
-        {/* 下部の余白 */}
-        <div className="h-20 bg-white"></div>
+        {/* 下部の余白 - ボトムナビゲーションの高さ分を確保 */}
+        <div className="h-24 bg-white"></div>
 
         {/* ボトムナビゲーション */}
         <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-md">
