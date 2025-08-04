@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getThemeColors, getThemeColor, getThemeBackgroundColor, getHowToParticipate } from '../../utils/app-utils';
+import { getThemeBackgroundColor, getHowToParticipate } from '../../utils/app-utils';
 
 const HowToParticipate = () => {
   const [imageStates, setImageStates] = useState({});
-  const themeColor = getThemeColor();
-  const themeColors = getThemeColors(themeColor);
   const themeBackgroundColor = getThemeBackgroundColor();
   const config = getHowToParticipate();
 

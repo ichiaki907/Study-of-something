@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import KeyVisual from "../features/KeyVisual";
 import StampProgressBar from "../ui/StampProgressBar";
 import StampDisplay from "../features/StampDisplay";
@@ -68,6 +68,39 @@ const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
   const benefitsSectionRef = useRef(null);
   const spotsSectionRef = useRef(null);
 
+  // handleTabChangeをuseCallbackで定義
+  const handleTabChange = useCallback((tabId, isScroll) => {
+    setActiveTab(tabId);
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
+
+    if (isScroll) return;
+
+    let targetRef;
+    switch (tabId) {
+      case "stamps":
+        targetRef = stampSectionRef;
+        break;
+      case "benefits":
+        targetRef = benefitsSectionRef;
+        break;
+      case "spots":
+        targetRef = spotsSectionRef;
+        break;
+      default:
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+    }
+
+    if (targetRef.current) {
+      targetRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [onTabChange]);
+
   // 外部のactiveTabが変更されたときに内部状態を更新
   useEffect(() => {
     if (externalActiveTab && externalActiveTab !== activeTab) {
@@ -111,39 +144,7 @@ const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
         }
       });
     };
-  }, []);
-
-  const handleTabChange = (tabId, isScroll) => {
-    setActiveTab(tabId);
-    if (onTabChange) {
-      onTabChange(tabId);
-    }
-
-    if (isScroll) return;
-
-    let targetRef;
-    switch (tabId) {
-      case "stamps":
-        targetRef = stampSectionRef;
-        break;
-      case "benefits":
-        targetRef = benefitsSectionRef;
-        break;
-      case "spots":
-        targetRef = spotsSectionRef;
-        break;
-      default:
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-    }
-
-    if (targetRef.current) {
-      targetRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
+  }, [handleTabChange]);
 
   const handleButtonClick = (benefitId) => {
     const benefit = benefits.find((b) => b.id === benefitId);
