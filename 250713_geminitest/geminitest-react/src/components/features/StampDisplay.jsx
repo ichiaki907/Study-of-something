@@ -15,6 +15,7 @@ const StampDisplay = ({
     isOpen: false,
     data: null,
   });
+  const [isNoticeExpanded, setIsNoticeExpanded] = useState(false);
 
   const handleStampClick = (stampData) => {
     setModalData({ isOpen: true, data: stampData });
@@ -145,6 +146,42 @@ const StampDisplay = ({
             }
           />
         ))}
+      </div>
+
+      {/* 注意書き */}
+      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <button
+          onClick={() => setIsNoticeExpanded(!isNoticeExpanded)}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <h4 className="text-xs font-semibold text-yellow-800">
+            スタンプが反映されていない場合
+          </h4>
+          <svg
+            className={`w-4 h-4 text-yellow-600 transition-transform duration-200 ${
+              isNoticeExpanded ? 'rotate-180' : ''
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isNoticeExpanded ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <p className="text-xs text-yellow-700 mt-2">
+            スタンプ獲得から反映まで30秒程度要することがあります。反映されていない場合はしばらく後に更新してください。
+          </p>
+        </div>
       </div>
 
       {/* 共通モーダル */}
