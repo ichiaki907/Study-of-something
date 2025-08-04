@@ -1,7 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 
 const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [startY, setStartY] = useState(0);
+  const [currentY, setCurrentY] = useState(0);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const modalRef = useRef(null);
   const { currentTheme } = useTheme();
 
   // モーダルの開閉時にbodyのスクロールを制御
@@ -9,9 +15,12 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
     if (isOpen) {
       // モーダルが開いている時はbodyのスクロールを無効化
       document.body.style.overflow = 'hidden';
+      // 初期化フラグを設定
+      setTimeout(() => setIsInitialized(true), 10);
     } else {
       // モーダルが閉じている時はbodyのスクロールを有効化
       document.body.style.overflow = 'unset';
+      setIsInitialized(false);
     }
 
     // コンポーネントのアンマウント時にbodyのスクロールを復元
@@ -19,6 +28,42 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
+
+  // グラブバーのタッチイベントハンドラー
+  const handleGrabBarTouchStart = (e) => {
+    e.stopPropagation();
+    setIsDragging(true);
+    setStartY(e.touches[0].clientY);
+    setCurrentY(e.touches[0].clientY);
+  };
+
+  const handleGrabBarTouchMove = (e) => {
+    e.stopPropagation();
+    if (!isDragging) return;
+    const touchY = e.touches[0].clientY;
+    setCurrentY(touchY);
+  };
+
+  const handleGrabBarTouchEnd = (e) => {
+    e.stopPropagation();
+    if (!isDragging) return;
+
+    const deltaY = currentY - startY;
+    const threshold = 100; // 閉じるための閾値
+
+    if (deltaY > threshold) {
+      // 閉じるアニメーションを開始
+      setIsClosing(true);
+      setTimeout(() => {
+        onClose();
+        setIsClosing(false);
+      }, 300); // アニメーション時間
+    }
+
+    setIsDragging(false);
+    setStartY(0);
+    setCurrentY(0);
+  };
 
   if (!isOpen || !data) return null;
 
@@ -57,16 +102,65 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
 
   const displayData = getDisplayData();
 
+  // ドラッグ中のスタイル計算
+  const getModalStyle = () => {
+    if (isClosing) {
+      return {
+        transform: 'translateY(100%)',
+        transition: 'transform 0.3s ease-out',
+      };
+    }
+    
+    if (isDragging) {
+      const translateY = Math.max(0, currentY - startY);
+      return {
+        transform: `translateY(${translateY}px)`,
+        transition: 'none',
+        opacity: Math.max(0.7, 1 - translateY / 500),
+      };
+    }
+    
+    return {
+      transform: isOpen && isInitialized ? 'translateY(0)' : 'translateY(100%)',
+      transition: isInitialized ? 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
+    };
+  };
+
   return (
     <div className="fixed inset-0 z-50">
       {/* 背景オーバーレイ */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-out animate-fadeIn"
+        className="absolute inset-0 bg-black transition-opacity duration-300 ease-out"
+        style={{
+          opacity: isOpen ? 0.5 : 0,
+        }}
         onClick={onClose}
       ></div>
 
-      {/* フルスクリーンモーダル */}
-      <div className="absolute inset-0 bg-white transform transition-all duration-400 ease-out animate-slideIn">
+      {/* ボトムシートモーダル */}
+      <div
+        ref={modalRef}
+        className="absolute inset-0 bg-white transform"
+        style={{
+          ...getModalStyle(),
+          touchAction: 'none',
+        }}
+      >
+        {/* グラブバー */}
+        <div 
+          className="flex justify-center pt-4 pb-2 cursor-grab active:cursor-grabbing"
+          onTouchStart={handleGrabBarTouchStart}
+          onTouchMove={handleGrabBarTouchMove}
+          onTouchEnd={handleGrabBarTouchEnd}
+          style={{ touchAction: 'none' }}
+        >
+          <div
+            className={`w-12 h-1 rounded-full transition-colors duration-200 ${
+              isDragging ? "bg-gray-500" : "bg-gray-300"
+            }`}
+          ></div>
+        </div>
+
         {/* 右上のバツボタン */}
         <button
           onClick={onClose}
@@ -88,11 +182,16 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
         </button>
 
         {/* コンテンツ */}
-        <div className="flex flex-col h-full overflow-y-auto">
+        <div 
+          className="flex flex-col h-full overflow-y-auto"
+          style={{ 
+            touchAction: 'pan-y' // 縦方向のスクロールのみ許可
+          }}
+        >
           {/* コンテンツコンテナ - スマホ幅に制限 */}
           <div className="w-full max-w-md mx-auto h-full">
             {/* 画像 - レスポンシブ */}
-            <div className="w-full h-1/2 px-4 sm:px-6 md:px-8 flex-shrink-0">
+            <div className="w-full h-64 px-4 sm:px-6 md:px-8 flex-shrink-0">
               <div className="w-full h-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
                 <img
                   src={displayData.image || "/logo192.png"}
