@@ -1,0 +1,68 @@
+{
+  "description": "スタンプラリーに参加する手順をご説明します",
+  "showDetails": false,
+  "showIcons": true,
+  "alignment": "center",
+  "steps": [
+    {
+      "id": 1,
+      "title": "スポットを訪れる",
+      "description": "東京の観光スポットを実際に訪れて、その場所の魅力を体験してください。",
+      "icon": "location",
+      "image": {
+        "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+        "alt": "スポットを訪れる様子"
+      },
+      "details": [
+        "8つの指定されたスポットのいずれかに行く",
+        "現地で写真を撮る",
+        "その場所の雰囲気を楽しむ"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "スタンプを獲得",
+      "description": "スポットに到着したら、アプリでスタンプを押して獲得してください。",
+      "icon": "check",
+      "image": {
+        "url": "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=300&fit=crop",
+        "alt": "スタンプを獲得する様子"
+      },
+      "details": [
+        "アプリを開いて該当スポットを選択",
+        "「スタンプを押す」ボタンをタップ",
+        "位置情報で到着を確認"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "特典を確認",
+      "description": "スタンプを集めることで、様々な特典がアンロックされます。",
+      "icon": "gift",
+      "image": {
+        "url": "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400&h=300&fit=crop",
+        "alt": "特典を確認する様子"
+      },
+      "details": [
+        "スタンプ数に応じて特典が解放",
+        "NFT特典の獲得",
+        "限定コンテンツへのアクセス"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "完了を目指す",
+      "description": "全てのスポットを制覇して、スタンプラリーを完成させましょう！",
+      "icon": "trophy",
+      "image": {
+        "url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop",
+        "alt": "完了を目指す様子"
+      },
+      "details": [
+        "8つのスポット全てを制覇",
+        "コンプリート特典の獲得",
+        "達成感を味わう"
+      ]
+    }
+  ]
+} 

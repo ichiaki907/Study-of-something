@@ -1,5 +1,6 @@
 import appSettings from '../data/app-settings.json';
 import imageConfig from '../config/image-config.json';
+import howToParticipateConfig from '../data/how-to-participate.json';
 
 // ===== 設定関連の関数 =====
 
@@ -13,6 +14,7 @@ export const getKeyVisual = () => appSettings.keyVisual;
 export const getImages = () => imageConfig;
 export const getStampDisplay = () => appSettings.stampDisplay;
 export const getFavicon = () => appSettings.appInfo.favicon;
+export const getHowToParticipate = () => howToParticipateConfig;
 
 // ページタイトルを設定する関数
 export const setPageTitle = () => {
