@@ -149,16 +149,16 @@ const StampDisplay = ({
       </div>
 
       {/* 注意書き */}
-      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
         <button
           onClick={() => setIsNoticeExpanded(!isNoticeExpanded)}
           className="flex items-center justify-between w-full text-left"
         >
-          <h4 className="text-xs font-semibold text-yellow-800">
-            スタンプが反映されていない場合
+          <h4 className="text-xs font-semibold text-gray-800">
+            もしスタンプが反映されていない場合
           </h4>
           <svg
-            className={`w-4 h-4 text-yellow-600 transition-transform duration-200 ${
+            className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${
               isNoticeExpanded ? 'rotate-180' : ''
             }`}
             fill="none"
@@ -178,7 +178,7 @@ const StampDisplay = ({
             isNoticeExpanded ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
-          <p className="text-xs text-yellow-700 mt-2">
+          <p className="text-xs text-gray-700 mt-2">
             スタンプ獲得から反映まで30秒程度要することがあります。反映されていない場合はしばらく後に更新してください。
           </p>
         </div>
