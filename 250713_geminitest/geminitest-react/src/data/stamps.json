@@ -10,7 +10,7 @@
       "other": "混雑時は注意が必要です",
       "map": "https://maps.google.com/?q=渋谷スクランブル交差点",
       "web": "https://www.shibuya.tokyo.jp/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop",
       "isStamped": true
     },
     {
@@ -23,7 +23,7 @@
       "other": "入園料：大人500円",
       "map": "https://maps.google.com/?q=新宿御苑",
       "web": "https://www.env.go.jp/garden/shinjukugyoen/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&h=300&fit=crop",
       "isStamped": true
     },
     {
@@ -36,7 +36,7 @@
       "other": "各店舗により営業時間が異なります",
       "map": "https://maps.google.com/?q=中野ブロードウェイ",
       "web": "https://www.nakano-broadway.com/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
       "isStamped": true
     },
     {
@@ -49,7 +49,7 @@
       "other": "夕日スポットとして人気",
       "map": "",
       "web": "https://www.city.shinagawa.tokyo.jp/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
       "isStamped": false
     },
     {
@@ -62,7 +62,7 @@
       "other": "展覧会により入館料が異なります",
       "map": "https://maps.google.com/?q=目黒区美術館",
       "web": "https://mmat.jp/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop",
       "isStamped": true
     },
     {
@@ -75,7 +75,7 @@
       "other": "参拝は無料、おみくじは100円",
       "map": "https://maps.google.com/?q=浅草寺",
       "web": "https://www.senso-ji.jp/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400&h=300&fit=crop",
       "isStamped": true
     },
     {
@@ -88,7 +88,7 @@
       "other": "展望台入場料：大人2,100円",
       "map": "https://maps.google.com/?q=東京スカイツリー",
       "web": "https://www.tokyo-skytree.jp/",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop",
       "isStamped": false
     },
     {
@@ -101,7 +101,7 @@
       "other": "公園内の施設により営業時間が異なります",
       "map": "https://maps.google.com/?q=上野公園",
       "web": "https://www.tokyo-park.or.jp/park/format/index037.html",
-      "image": "/logo192.png",
+      "image": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&h=300&fit=crop",
       "isStamped": true
     }
   ]

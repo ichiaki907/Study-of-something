@@ -13,6 +13,32 @@ const DEFAULT_CONFIG = {
     displayFormat: "開催期間：{startDate}～{endDate}",
   },
 
+  // キービジュアル設定（画像のみ）
+  keyVisual: {
+          // キービジュアル画像
+      image: {
+        url: "/key.png", // 画像URLを設定してください
+        alt: "キービジュアル",
+      },
+    
+    // テキスト設定（画像に重ねて表示）
+    text: {
+      enabled: false, // テキスト表示の有効/無効
+      title: "スタンプラリー",
+      description: "スタンプを集めて素敵な特典をゲットしよう！",
+      color: "text-white",
+    },
+    
+    // 開催期間表示設定
+    eventPeriod: {
+      enabled: true,
+      color: "text-white",
+    },
+    
+    // アスペクト比設定
+    aspectRatio: "aspect-square", // "aspect-square", "aspect-video", "aspect-[4/3]"
+  },
+
   // ページタイトル設定
   pageTitles: {
     main: "xxNFTスタンプラリー",
@@ -28,6 +54,24 @@ const DEFAULT_CONFIG = {
 
 // アプリケーション基本設定（デフォルト設定）
 export const APP_CONFIG = DEFAULT_CONFIG;
+
+// キービジュアル設定を取得する関数
+export const getKeyVisualConfig = () => {
+  return APP_CONFIG.keyVisual;
+};
+
+// キービジュアル設定を更新する関数
+export const updateKeyVisualConfig = (newConfig) => {
+  APP_CONFIG.keyVisual = { ...APP_CONFIG.keyVisual, ...newConfig };
+  return APP_CONFIG.keyVisual;
+};
+
+// キービジュアル画像を設定する関数
+export const setKeyVisualImage = (imageUrl, alt = "キービジュアル") => {
+  APP_CONFIG.keyVisual.image.url = imageUrl;
+  APP_CONFIG.keyVisual.image.alt = alt;
+  return APP_CONFIG.keyVisual.image;
+};
 
 // ページタイトルを設定する関数
 export const setPageTitle = (pageType = "main") => {

@@ -7,7 +7,7 @@ import BenefitCard from "../features/BenefitCard";
 import BottomNavigation from "./BottomNavigation";
 import DetailModal from "../features/DetailModal";
 import { getBenefitsData } from "../../utils/benefitUtils";
-import { getStampsData, getStampStatus } from "../../utils/stampUtils";
+import { getStampsData, getStampStatus, getImageUrl, handleImageError } from "../../utils/stampUtils";
 
 const NFTBenefitsPage = () => {
   // ローカルストレージから列数を取得、デフォルトは2
@@ -166,9 +166,10 @@ const NFTBenefitsPage = () => {
                     <div className="flex items-start">
                       <div className="w-20 h-20 flex-shrink-0 mr-4">
                         <img
-                          src={location.image || "/logo192.png"}
+                          src={getImageUrl(location.image)}
                           alt={location.name}
                           className="w-full h-full object-cover rounded-md"
+                          onError={handleImageError}
                         />
                       </div>
                       <div className="flex-1">

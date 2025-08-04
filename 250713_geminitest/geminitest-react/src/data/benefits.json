@@ -8,7 +8,8 @@
     "usageLimit": 1,
     "isActive": true,
     "buttonText": "特典を利用する",
-    "url": "https://example.com/coupon-3percent"
+    "url": "https://example.com/coupon-3percent",
+    "image": "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400&h=300&fit=crop"
   },
   {
     "id": 2,
@@ -19,7 +20,8 @@
     "usageLimit": 1,
     "isActive": false,
     "buttonText": "条件未達成です",
-    "url": "https://example.com/nft-reward"
+    "url": "https://example.com/nft-reward",
+    "image": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop"
   },
   {
     "id": 3,
@@ -30,6 +32,7 @@
     "usageLimit": 1,
     "isActive": false,
     "buttonText": "条件未達成です",
-    "url": "https://example.com/coupon-5percent"
+    "url": "https://example.com/coupon-5percent",
+    "image": "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400&h=300&fit=crop"
   }
 ]

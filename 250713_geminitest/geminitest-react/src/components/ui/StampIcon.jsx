@@ -1,7 +1,8 @@
 import React from "react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { getImageUrl, handleImageError } from "../../utils/stampUtils";
 
-const StampIcon = ({ number, isStamped, locationName, onClick }) => {
+const StampIcon = ({ number, isStamped, locationName, onClick, image }) => {
   const { currentTheme } = useTheme();
   const stampedClasses = `bg-${currentTheme}-500 text-white`;
   const unstampedClasses = "bg-gray-200 text-gray-400";
@@ -16,9 +17,10 @@ const StampIcon = ({ number, isStamped, locationName, onClick }) => {
       >
         {isStamped ? (
           <img
-            src="/logo192.png"
+            src={getImageUrl(image)}
             alt={`スタンプ${number}`}
-            className="w-3/4 h-3/4 object-contain"
+            className="w-full h-full object-cover rounded-lg"
+            onError={handleImageError}
           />
         ) : (
           number

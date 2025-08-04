@@ -123,6 +123,7 @@ const StampDisplay = ({
             number={location.id}
             isStamped={location.isStamped}
             locationName={location.name}
+            image={location.image}
             onClick={() =>
               handleStampClick({
                 number: location.id,

@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { getBenefitImageUrl, handleBenefitImageError } from "../../utils/benefitUtils";
 
 const BenefitCard = ({ benefit, onButtonClick }) => {
   const { currentTheme } = useTheme();
   const [showUsage, setShowUsage] = useState(false);
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg w-full">
-      <div className="w-full aspect-square bg-gray-400"></div>
+      <div className="w-full aspect-square bg-gray-400 relative overflow-hidden">
+        <img
+          src={getBenefitImageUrl(benefit.image)}
+          alt={benefit.title}
+          className="w-full h-full object-cover"
+          onError={handleBenefitImageError}
+        />
+      </div>
       <div className="p-5">
         <h3 className="text-base font-bold text-gray-800 mb-4">
           {benefit.title}

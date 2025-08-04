@@ -1,5 +1,18 @@
 import stampsData from "../data/stamps.json";
 
+// デフォルトのフォールバック画像URL
+export const DEFAULT_IMAGE_URL = "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop";
+
+// 画像URLを取得する関数（フォールバック処理付き）
+export const getImageUrl = (imageUrl) => {
+  return imageUrl || DEFAULT_IMAGE_URL;
+};
+
+// 画像エラーハンドリング関数
+export const handleImageError = (event) => {
+  event.target.src = DEFAULT_IMAGE_URL;
+};
+
 // スタンプの状態を管理する関数
 export const getStampStatus = () => {
   const total = stampsData.locations.length;

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { getImageUrl, handleImageError } from "../../utils/stampUtils";
 
 const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -194,9 +195,10 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
             <div className="w-full h-64 px-4 sm:px-6 md:px-8 flex-shrink-0">
               <div className="w-full h-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
                 <img
-                  src={displayData.image || "/logo192.png"}
+                  src={getImageUrl(displayData.image)}
                   alt={displayData.title}
-                  className="w-full h-full object-contain rounded-lg"
+                  className="w-full h-full object-cover rounded-lg shadow-lg"
+                  onError={handleImageError}
                 />
               </div>
             </div>
