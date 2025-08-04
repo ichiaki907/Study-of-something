@@ -28,26 +28,26 @@
   "footer": {
     "links": {
       "terms": {
-        "url": "#"
+        "url": "https://example.com/terms"
       },
       "privacy": {
-        "url": "#"
+        "url": "https://example.com/privacy"
       }
     },
     "socialMedia": {
       "twitter": {
-        "url": "#"
+        "url": "https://twitter.com/yourcompany"
       },
       "instagram": {
-        "url": "#"
+        "url": "https://instagram.com/yourcompany"
       },
       "facebook": {
-        "url": "#"
+        "url": "https://facebook.com/yourcompany"
       }
     },
     "copyright": {
-      "text": "© 2024 ABCスタンプラリー. All rights reserved.",
-      "company": "ABCスタンプラリー"
+      "company": "ABCスタンプラリー",
+      "text": "© 2024 ABCスタンプラリー. All rights reserved."
     }
   }
 } 

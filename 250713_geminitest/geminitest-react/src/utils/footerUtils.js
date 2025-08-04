@@ -41,28 +41,62 @@ export const getCopyrightInfo = () => {
 };
 
 /**
+ * URLが有効かどうかをチェックする
+ * @param {string} url - チェックするURL
+ * @returns {boolean} URLが有効な場合true
+ */
+export const isValidUrl = (url) => {
+  if (!url || url === '#' || url === '' || url === null || url === undefined) {
+    return false;
+  }
+  
+  // 外部URLの場合はhttps://またはhttp://で始まるかチェック
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  
+  // 内部リンクの場合は/で始まるかチェック
+  return url.startsWith('/');
+};
+
+/**
  * フッターリンクの表示用データを取得する
  * @returns {Array} フッターリンクの配列
  */
 export const getFooterLinks = () => {
   const config = appSettings.footer.links;
-  return [
+  const links = [];
+  
+  // 利用規約のURLが有効な場合のみ追加
+  if (isValidUrl(config.terms.url)) {
+    links.push({
+      name: "利用規約",
+      url: config.terms.url,
+      action: "terms"
+    });
+  }
+  
+  // プライバシーポリシーのURLが有効な場合のみ追加
+  if (isValidUrl(config.privacy.url)) {
+    links.push({
+      name: "プライバシーポリシー",
+      url: config.privacy.url,
+      action: "privacy"
+    });
+  }
+  
+  // リンクが存在する場合のみセクションを返す
+  return links.length > 0 ? [
     {
       title: "サービス",
-      links: [
-        {
-          name: "利用規約",
-          url: config.terms.url,
-          action: "terms"
-        },
-        {
-          name: "プライバシーポリシー",
-          url: config.privacy.url,
-          action: "privacy"
-        }
-      ]
+      links: links
     }
-  ];
+  ] : [];
 };
 
 /**
@@ -71,26 +105,39 @@ export const getFooterLinks = () => {
  */
 export const getSocialMediaLinks = () => {
   const config = appSettings.footer.socialMedia;
-  return [
-    {
+  const socialLinks = [];
+  
+  // TwitterのURLが有効な場合のみ追加
+  if (isValidUrl(config.twitter.url)) {
+    socialLinks.push({
       name: "Twitter",
       icon: "twitter",
       url: config.twitter.url,
       action: "twitter"
-    },
-    {
+    });
+  }
+  
+  // InstagramのURLが有効な場合のみ追加
+  if (isValidUrl(config.instagram.url)) {
+    socialLinks.push({
       name: "Instagram",
       icon: "instagram",
       url: config.instagram.url,
       action: "instagram"
-    },
-    {
+    });
+  }
+  
+  // FacebookのURLが有効な場合のみ追加
+  if (isValidUrl(config.facebook.url)) {
+    socialLinks.push({
       name: "Facebook",
       icon: "facebook",
       url: config.facebook.url,
       action: "facebook"
-    }
-  ];
+    });
+  }
+  
+  return socialLinks;
 };
 
 /**
