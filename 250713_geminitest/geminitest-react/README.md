@@ -1,8 +1,162 @@
-# Getting Started with Create React App
+# 東京スタンプラリー React アプリケーション
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+このプロジェクトは、スタンプラリー機能を持つReactアプリケーションです。プログラミングの知識がなくても、JSONファイルを編集するだけでアプリケーションをカスタマイズできます。
 
-## 画像設定について
+## 📋 目次
+
+- [プロジェクト概要](#プロジェクト概要)
+- [クイックスタート](#クイックスタート)
+- [設定ファイル](#設定ファイル)
+- [カスタマイズ方法](#カスタマイズ方法)
+- [画像設定](#画像設定)
+- [テーマ設定](#テーマ設定)
+- [フッター設定](#フッター設定)
+- [開発者向け情報](#開発者向け情報)
+
+## 🎯 プロジェクト概要
+
+このアプリケーションは以下の機能を提供します：
+
+- **スタンプラリー**: 各地のスポットを巡ってスタンプを集める
+- **特典システム**: スタンプを集めることで特典を獲得
+- **レスポンシブデザイン**: モバイル・デスクトップ対応
+- **テーマカスタマイズ**: 色合いの変更が可能
+- **設定ファイル管理**: JSONファイルで簡単カスタマイズ
+
+## 🚀 クイックスタート
+
+### インストールと起動
+
+```bash
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
+npm start
+```
+
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてアプリケーションを確認できます。
+
+### 本番ビルド
+
+```bash
+# 本番用ビルド
+npm run build
+```
+
+## ⚙️ 設定ファイル
+
+このアプリケーションでは、すべての設定がJSONファイルで管理されています。
+
+### 📁 ファイル構成
+
+```
+src/
+├── data/                    # 編集可能な設定ファイル
+│   ├── app-settings.json   # アプリケーション基本設定
+│   ├── stamps.json         # スタンプデータ
+│   ├── benefits.json       # 特典データ
+│   └── how-to-participate.json # 参加方法データ
+├── config/                  # 技術的設定ファイル（原則変更不可）
+│   ├── image-config.json   # 画像設定
+│   └── settings.js         # アプリケーション設定
+└── utils/                   # ユーティリティ関数
+    ├── app-utils.js        # アプリケーション設定関連
+    └── footerUtils.js      # フッター設定関連
+```
+
+## 🎨 カスタマイズ方法
+
+### 1. アプリケーション基本設定 (`src/data/app-settings.json`)
+
+アプリケーションの基本情報を設定します：
+
+```json
+{
+  "appInfo": {
+    "name": "私のスタンプラリー",
+    "pageTitle": "私のスタンプラリー",
+    "description": "楽しいスタンプ集めをしましょう！",
+    "themeColor": "green",
+    "favicon": "/favicon.ico"
+  },
+  "eventPeriod": {
+    "startDate": "2025年1月1日",
+    "endDate": "2025年12月31日",
+    "displayFormat": "開催期間：{startDate}～{endDate}",
+    "showOnKeyVisual": true
+  },
+  "keyVisual": {
+    "image": {
+      "url": "/key.png",
+      "alt": "キービジュアル - スタンプラリーのメイン画像"
+    },
+    "aspectRatio": "aspect-square"
+  },
+  "stampDisplay": {
+    "defaultColumns": 3,
+    "allowColumnToggle": true,
+    "showLocationNames": true,
+    "showProgressBar": true
+  },
+  "footer": {
+    "links": {
+      "terms": { "url": "#" },
+      "privacy": { "url": "#" }
+    },
+    "socialMedia": {
+      "twitter": { "url": "#" },
+      "instagram": { "url": "#" },
+      "facebook": { "url": "#" }
+    },
+    "copyright": {
+      "text": "© 2024 私のスタンプラリー. All rights reserved.",
+      "company": "私のスタンプラリー"
+    }
+  }
+}
+```
+
+### 2. スタンプデータ (`src/data/stamps.json`)
+
+スタンプラリーで使用するスタンプの情報を設定します：
+
+```json
+{
+  "locations": [
+    {
+      "id": 1,
+      "name": "東京タワー",
+      "description": "東京のシンボルタワー",
+      "address": "東京都港区芝公園4-2-8",
+      "phone": "03-3433-5111",
+      "hours": "9:00-23:00",
+      "image": "tokyo-tower.jpg",
+      "map": "https://maps.google.com/...",
+      "web": "https://www.tokyotower.co.jp/",
+      "isStamped": false
+    }
+  ]
+}
+```
+
+### 3. 特典データ (`src/data/benefits.json`)
+
+スタンプを集めた際の特典情報を設定します：
+
+```json
+[
+  {
+    "id": 1,
+    "title": "オリジナルステッカー",
+    "description": "限定デザインのステッカー",
+    "image": "sticker.jpg",
+    "requiredStamps": 5
+  }
+]
+```
+
+## 🖼️ 画像設定
 
 このアプリケーションでは、画像はJSONファイルで一元管理されています。
 
@@ -51,185 +205,279 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### 画像設定のカスタマイズ
 
-`src/config/imageConfig.js` ファイルで、デフォルト画像や画像サイズの設定を変更できます。
+`src/config/image-config.json` ファイルで、デフォルト画像や画像サイズの設定を変更できます。
 
-## キービジュアル設定について
+## 🎨 テーマ設定
 
-キービジュアルは画像を設定するだけで完結します。`src/config/appConfig.js` ファイルで簡単にカスタマイズできます。
+アプリケーションの色合いを変更できます。
+
+### 利用可能なテーマ
+
+- **red**: レッド系（情熱的な赤系）
+- **blue**: ブルー系（爽やかな青系）
+- **green**: グリーン系（自然な緑系）
+- **purple**: パープル系（高級感のある紫系）
+- **orange**: オレンジ系（温かみのあるオレンジ系）
+- **teal**: ティール系（落ち着いた青緑系）
+- **indigo**: インディゴ系（深みのある藍系）
+- **pink**: ピンク系（可愛らしいピンク系）
+
+### テーマの変更方法
+
+`app-settings.json`の`appInfo.themeColor`を変更するだけです：
+
+```json
+{
+  "appInfo": {
+    "themeColor": "green"
+  }
+}
+```
+
+### カスタムテーマの追加
+
+新しいテーマを追加する場合は、`src/utils/app-utils.js`の`getAvailableThemes()`関数を編集してください：
+
+```javascript
+export const getAvailableThemes = () => {
+  return {
+    // 既存のテーマ...
+    custom: {
+      name: "カスタム",
+      description: "オリジナルテーマ",
+      backgroundColor: "bg-orange-500/80",
+      textColor: "text-white"
+    }
+  };
+};
+```
+
+## 🔗 フッター設定
+
+フッターの設定は `app-settings.json` ファイルの `footer` セクションで管理されます。
+
+### 設定項目
+
+#### 1. フッターリンク
+フッターリンクのURL設定です。リンク名は固定で、URLのみ設定可能です。
+
+```json
+{
+  "footer": {
+    "links": {
+      "terms": {
+        "url": "利用規約のURL"
+      },
+      "privacy": {
+        "url": "プライバシーポリシーのURL"
+      }
+    }
+  }
+}
+```
+
+#### 2. ソーシャルメディア
+ソーシャルメディアのURL設定です。サービス名とアイコンは固定で、URLのみ設定可能です。
+
+```json
+{
+  "footer": {
+    "socialMedia": {
+      "twitter": {
+        "url": "TwitterのURL"
+      },
+      "instagram": {
+        "url": "InstagramのURL"
+      },
+      "facebook": {
+        "url": "FacebookのURL"
+      }
+    }
+  }
+}
+```
+
+#### 3. コピーライト
+- `text`: コピーライトテキスト
+- `company`: 会社名
+
+### 設定例
+
+```json
+{
+  "footer": {
+    "links": {
+      "terms": {
+        "url": "https://example.com/terms"
+      },
+      "privacy": {
+        "url": "https://example.com/privacy"
+      }
+    },
+    "socialMedia": {
+      "twitter": {
+        "url": "https://twitter.com/yourcompany"
+      },
+      "instagram": {
+        "url": "https://instagram.com/yourcompany"
+      },
+      "facebook": {
+        "url": "https://facebook.com/yourcompany"
+      }
+    },
+    "copyright": {
+      "text": "© 2024 ABCスタンプラリー. All rights reserved.",
+      "company": "ABCスタンプラリー"
+    }
+  }
+}
+```
+
+### 使用方法
+
+1. `app-settings.json` ファイルの `footer` セクションを編集して、必要なURLを設定します
+2. アプリケーションを再起動すると、変更が反映されます
+3. フッターコンポーネントは自動的に設定ファイルから情報を読み込みます
+
+### 注意事項
+
+- JSONファイルの形式を正しく保ってください
+- リンク名やソーシャルメディアの名称は固定で変更できません
+- URLは実際のリンク先に変更してください
+- アプリ情報とコピーライトは自由に変更可能です
+
+## 🖼️ キービジュアル設定
+
+キービジュアルは画像を設定するだけで完結します。`app-settings.json` ファイルで簡単にカスタマイズできます。
 
 ### 基本的な設定方法
 
-```javascript
-// src/config/appConfig.js
-const DEFAULT_CONFIG = {
-  keyVisual: {
-    // キービジュアル画像
-    image: {
-      url: "https://example.com/keyvisual.jpg", // 画像URLを設定
-      alt: "キービジュアル",
-      overlay: "rgba(0, 0, 0, 0.3)", // オーバーレイ（必要に応じて調整）
+```json
+{
+  "keyVisual": {
+    "image": {
+      "url": "/key.png",
+      "alt": "キービジュアル - スタンプラリーのメイン画像"
     },
-    
-
-    
-    // 開催期間表示設定
-    eventPeriod: {
-      enabled: true,
-      color: "text-white",
-    },
-    
-    // アスペクト比設定
-    aspectRatio: "aspect-square", // "aspect-square", "aspect-video", "aspect-[4/3]"
-  },
-};
+    "aspectRatio": "aspect-square"
+  }
+}
 ```
 
 ### 画像設定の詳細
 
 #### 1. 基本的な画像設定
-```javascript
-image: {
-  url: "https://example.com/image.jpg",
-  alt: "キービジュアル",
-  overlay: "rgba(0, 0, 0, 0.3)", // テキストの視認性を向上
+```json
+{
+  "keyVisual": {
+    "image": {
+      "url": "https://example.com/image.jpg",
+      "alt": "キービジュアル"
+    }
+  }
 }
 ```
 
-#### 2. オーバーレイなしの設定
-```javascript
-image: {
-  url: "https://example.com/image.jpg",
-  alt: "キービジュアル",
-  overlay: "", // オーバーレイなし
+#### 2. アスペクト比の設定
+```json
+{
+  "keyVisual": {
+    "aspectRatio": "aspect-square"  // 正方形
+    // "aspect-video"  // 横長（16:9）
+    // "aspect-[4/3]"  // カスタム比率
+  }
 }
-```
-
-#### 3. カスタムオーバーレイ
-```javascript
-image: {
-  url: "https://example.com/image.jpg",
-  alt: "キービジュアル",
-  overlay: "rgba(59, 130, 246, 0.6)", // 青系のオーバーレイ
-}
-```
-
-### アスペクト比の設定
-
-```javascript
-aspectRatio: "aspect-square", // 正方形
-aspectRatio: "aspect-video", // 横長（16:9）
-aspectRatio: "aspect-[4/3]", // カスタム比率
 ```
 
 ### 開催期間表示の設定
 
-```javascript
-eventPeriod: {
-  enabled: true, // 表示する
-  color: "text-white",
-}
-
-// または
-
-eventPeriod: {
-  enabled: false, // 非表示にする
+```json
+{
+  "eventPeriod": {
+    "startDate": "2025年1月1日",
+    "endDate": "2025年12月31日",
+    "displayFormat": "開催期間：{startDate}～{endDate}",
+    "showOnKeyVisual": true
+  }
 }
 ```
 
-### 簡単な設定方法
+## 🛠️ 開発者向け情報
 
-#### 画像URLのみを設定
-```javascript
-import { setKeyVisualImage } from './config/appConfig';
+### 利用可能なスクリプト
 
-// 画像URLのみを設定（他の設定はデフォルト）
-setKeyVisualImage("https://example.com/keyvisual.jpg");
-```
+プロジェクトディレクトリで以下のコマンドを実行できます：
 
-#### サンプル設定を適用
-```javascript
-import { basicImageExample } from './config/keyVisualExamples';
-import { updateKeyVisualConfig } from './config/appConfig';
+#### `npm start`
+開発モードでアプリを起動します。\
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いて確認できます。
 
-// サンプル設定を適用
-updateKeyVisualConfig(basicImageExample);
-```
+変更を加えるとページが自動的にリロードされます。\
+コンソールにlintエラーが表示される場合があります。
 
-### サンプル設定
+#### `npm test`
+インタラクティブウォッチモードでテストランナーを起動します。
 
-`src/config/keyVisualExamples.js` ファイルに様々なサンプル設定が用意されています：
+#### `npm run build`
+本番用にアプリをビルドします。`build`フォルダに出力されます。\
+Reactが本番モードで正しくバンドルされ、最高のパフォーマンスに最適化されます。
 
-- `basicImageExample`: 基本的な画像設定
-- `noOverlayExample`: オーバーレイなしの設定
-- `imageOnlyExample`: テキストなしの設定
-- `wideAspectExample`: ワイドアスペクト比の設定
-- `customTextColorExample`: カスタムテキストカラーの設定
-- `noEventPeriodExample`: 開催期間表示なしの設定
-- `fullCustomExample`: 完全カスタムの設定
+ビルドは最小化され、ファイル名にハッシュが含まれます。\
+アプリのデプロイ準備が完了します！
 
-## Available Scripts
+#### `npm run eject`
+**注意: これは一方向の操作です。一度`eject`すると、元に戻すことはできません！**
 
-In the project directory, you can run:
+ビルドツールと設定の選択に満足できない場合は、いつでも`eject`できます。このコマンドは、プロジェクトから単一のビルド依存関係を削除します。
 
-### `npm start`
+代わりに、すべての設定ファイルと推移的依存関係（webpack、Babel、ESLintなど）をプロジェクトにコピーして、完全に制御できるようになります。`eject`以外のすべてのコマンドは引き続き動作しますが、コピーされたスクリプトを指すようになるので、必要に応じて調整できます。
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+`eject`を使用する必要はありません。キュレーションされた機能セットは小規模から中規模のデプロイメントに適しており、この機能を使用する義務を感じる必要はありません。
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📝 画像ファイルの配置
 
-### `npm test`
+画像ファイルは`public`フォルダに配置してください：
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **キービジュアル画像**: `public/key.png`
+- **スタンプ画像**: `public/stamp1.jpg`, `public/stamp2.jpg` など
+- **特典画像**: `public/benefit1.jpg`, `public/benefit2.jpg` など
+- **ファビコン**: `public/favicon.ico`
 
-### `npm run build`
+## ⚠️ 注意事項
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 編集可能なファイル
+- `src/data/app-settings.json` - アプリケーション基本設定
+- `src/data/stamps.json` - スタンプデータ
+- `src/data/benefits.json` - 特典データ
+- `src/data/how-to-participate.json` - 参加方法データ
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 原則変更不可のファイル
+- `src/config/image-config.json` - 画像設定（技術的な設定）
+- `src/config/settings.js` - アプリケーション設定（技術的な設定）
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### ファイル形式とエンコーディング
+1. **JSON形式**: すべてのファイルはJSON形式で記述してください
+2. **文字エンコーディング**: UTF-8で保存してください
+3. **画像ファイル**: 画像ファイルは事前に`public`フォルダに配置してください
+4. **URL**: 外部リンクは完全なURL（https://...）で記述してください
 
-### `npm run eject`
+## 🔄 編集手順
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. ファイルをテキストエディタで開く
+2. 必要な情報を編集
+3. ファイルを保存
+4. アプリケーションを再起動（必要に応じて）
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📚 参考資料
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+- [React documentation](https://reactjs.org/)
+- [Tailwind CSS documentation](https://tailwindcss.com/docs)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🤝 貢献
 
-## Learn More
+このプロジェクトへの貢献を歓迎します。バグレポートや機能リクエスト、プルリクエストを送信してください。
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📄 ライセンス
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+このプロジェクトはMITライセンスの下で公開されています。

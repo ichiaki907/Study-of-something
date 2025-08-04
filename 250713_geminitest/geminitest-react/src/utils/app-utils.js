@@ -16,6 +16,12 @@ export const getStampDisplay = () => appSettings.stampDisplay;
 export const getFavicon = () => appSettings.appInfo.favicon;
 export const getHowToParticipate = () => howToParticipateConfig;
 
+// フッター関連の設定を取得する関数
+export const getFooterConfig = () => appSettings.footer;
+export const getFooterLinksConfig = () => appSettings.footer.links;
+export const getSocialMediaConfig = () => appSettings.footer.socialMedia;
+export const getCopyrightInfo = () => appSettings.footer.copyright;
+
 // ページタイトルを設定する関数
 export const setPageTitle = () => {
   const title = appSettings.appInfo.pageTitle;

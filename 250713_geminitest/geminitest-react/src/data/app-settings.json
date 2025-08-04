@@ -24,5 +24,30 @@
     "allowColumnToggle": true,
     "showLocationNames": true,
     "showProgressBar": true
+  },
+  "footer": {
+    "links": {
+      "terms": {
+        "url": "#"
+      },
+      "privacy": {
+        "url": "#"
+      }
+    },
+    "socialMedia": {
+      "twitter": {
+        "url": "#"
+      },
+      "instagram": {
+        "url": "#"
+      },
+      "facebook": {
+        "url": "#"
+      }
+    },
+    "copyright": {
+      "text": "© 2024 ABCスタンプラリー. All rights reserved.",
+      "company": "ABCスタンプラリー"
+    }
   }
 } 
