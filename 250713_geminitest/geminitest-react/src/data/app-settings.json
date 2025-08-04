@@ -1,9 +1,10 @@
 {
   "appInfo": {
-    "name": "スタンプラリー",
+    "name": "ABCスタンプラリー",
+    "pageTitle": "ABCNFTスタンプラリー",
     "description": "スタンプを集めて素敵な特典をゲットしよう！",
-    "pageTitle": "xxNFTスタンプラリー",
-    "themeColor": "blue"
+    "themeColor": "red",
+    "favicon": "/favicon.ico"
   },
   "eventPeriod": {
     "startDate": "2025年10月29日(日)",
@@ -16,40 +17,12 @@
       "url": "/key.png",
       "alt": "キービジュアル - スタンプラリーのメイン画像"
     },
-    "text": {
-      "enabled": false,
-      "title": "スタンプラリー",
-      "description": "スタンプを集めて素敵な特典をゲットしよう！",
-      "color": "text-white"
-    },
     "aspectRatio": "aspect-square"
   },
-  "images": {
-    "defaults": {
-      "stamp": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop",
-      "benefit": "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400&h=300&fit=crop",
-      "nft": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop"
-    },
-    "sizes": {
-      "small": "w=200&h=150&fit=crop",
-      "medium": "w=400&h=300&fit=crop",
-      "large": "w=800&h=600&fit=crop"
-    },
-    "quality": {
-      "low": "&q=50",
-      "medium": "&q=75",
-      "high": "&q=100"
-    }
-  },
   "stampDisplay": {
-    "defaultColumns": 2,
+    "defaultColumns": 3,
+    "allowColumnToggle": true,
     "showLocationNames": true,
-    "showProgressBar": true,
-    "allowColumnToggle": true
-  },
-  "favicon": {
-    "path": "/favicon.ico",
-    "sizes": ["16x16", "32x32", "192x192", "512x512"],
-    "type": "image/x-icon"
+    "showProgressBar": true
   }
 } 

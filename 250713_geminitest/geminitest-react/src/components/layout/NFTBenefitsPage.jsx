@@ -8,12 +8,21 @@ import BottomNavigation from "./BottomNavigation";
 import DetailModal from "../features/DetailModal";
 import { getBenefitsData } from "../../utils/benefitUtils";
 import { getStampsData, getStampStatus, getImageUrl, handleImageError } from "../../utils/stampUtils";
+import { getThemeColors, getThemeColor, getModernButtonStyle, getStampDisplay } from "../../utils/app-utils";
 
 const NFTBenefitsPage = () => {
-  // ローカルストレージから列数を取得、デフォルトは2
+  // テーマカラーを取得
+  const themeColor = getThemeColor();
+  const themeColors = getThemeColors(themeColor);
+  const modernButtonStyle = getModernButtonStyle();
+  
+  // StampDisplayの設定を取得
+  const stampDisplayConfig = getStampDisplay();
+
+  // ローカルストレージから列数を取得、設定ファイルのデフォルト値を使用
   const [stampColumns, setStampColumns] = useState(() => {
     const saved = localStorage.getItem("stampColumns");
-    return saved ? parseInt(saved, 10) : 2;
+    return saved ? parseInt(saved, 10) : stampDisplayConfig.defaultColumns || 2;
   });
 
   const [activeTab, setActiveTab] = useState("home");
@@ -22,6 +31,28 @@ const NFTBenefitsPage = () => {
     data: null,
     type: "stamp",
   });
+
+  // スクロール位置に基づいてアクティブタブを更新する関数
+  const updateActiveTabOnScroll = () => {
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+
+    // 各セクションの位置を取得
+    const stampSectionTop = stampSectionRef.current?.offsetTop || 0;
+    const benefitsSectionTop = benefitsSectionRef.current?.offsetTop || 0;
+    const spotsSectionTop = spotsSectionRef.current?.offsetTop || 0;
+
+    // スクロール位置に基づいてタブを決定
+    if (scrollY < stampSectionTop - windowHeight * 0.3) {
+      setActiveTab("home");
+    } else if (scrollY < benefitsSectionTop - windowHeight * 0.3) {
+      setActiveTab("stamps");
+    } else if (scrollY < spotsSectionTop - windowHeight * 0.3) {
+      setActiveTab("benefits");
+    } else {
+      setActiveTab("spots");
+    }
+  };
 
   // スタンプの状態を取得
   const stampStatus = getStampStatus();
@@ -54,18 +85,36 @@ const NFTBenefitsPage = () => {
   const benefitsSectionRef = useRef(null);
   const spotsSectionRef = useRef(null);
 
-  // 背景色統一のためのuseEffect
+  // スクロール監視と背景色統一のためのuseEffect
   useEffect(() => {
     // ページ全体の背景色を白に統一（最小限の設定）
     document.documentElement.style.backgroundColor = 'white';
     
+    // スクロールイベントリスナーを追加
+    const handleScroll = () => {
+      updateActiveTabOnScroll();
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
     return () => {
       document.documentElement.style.backgroundColor = '';
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
+
+    // 手動クリック時は一時的にスクロール監視を無効化
+    const handleScrollEnd = () => {
+      setTimeout(() => {
+        window.addEventListener('scroll', updateActiveTabOnScroll);
+      }, 1000); // 1秒後にスクロール監視を再開
+    };
+
+    // スクロール監視を一時的に無効化
+    window.removeEventListener('scroll', updateActiveTabOnScroll);
 
     // 即座にスムーズスクロール
     switch (tabId) {
@@ -90,6 +139,9 @@ const NFTBenefitsPage = () => {
       default:
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
+    // スクロール完了後に監視を再開
+    setTimeout(handleScrollEnd, 1000);
   };
 
   const handleButtonClick = (benefitId) => {
@@ -112,16 +164,20 @@ const NFTBenefitsPage = () => {
           className="bg-white shadow-md overflow-hidden"
         >
           <div className="grid grid-cols-1 gap-4 p-4">
-            <StampProgressBar
-              collectedStamps={stampStatus.collected}
-              totalStamps={stampStatus.total}
-            />
+            {/* プログレスバー（設定で有効な場合のみ表示） */}
+            {stampDisplayConfig.showProgressBar && (
+              <StampProgressBar
+                collectedStamps={stampStatus.collected}
+                totalStamps={stampStatus.total}
+              />
+            )}
             <StampDisplay
               collectedStamps={stampStatus.collected}
               totalStamps={stampStatus.total}
               columns={stampColumns}
               onColumnsChange={handleColumnsChange}
               locations={getStampsData().locations}
+              config={stampDisplayConfig}
             />
           </div>
         </div>
@@ -153,13 +209,13 @@ const NFTBenefitsPage = () => {
                 >
                   {/* 獲得状況ラベル */}
                   <span
-                    className={`absolute top-2 right-2 z-10 inline-block px-2 py-1 text-xs font-medium rounded-full shadow-sm ${
+                    className={`absolute top-2 right-2 z-10 inline-block px-2 py-1 text-xs font-bold rounded-full shadow-sm ${
                       location.isStamped
-                        ? "bg-green-500 text-white"
+                        ? `${themeColors.primary} ${themeColors.text}`
                         : "bg-gray-500 text-white"
                     }`}
                   >
-                    {location.isStamped ? "獲得済み" : "未獲得"}
+                    {location.isStamped ? "獲得済" : "未獲得"}
                   </span>
 
                   <div className="p-4">
@@ -199,7 +255,7 @@ const NFTBenefitsPage = () => {
                                   e.stopPropagation();
                                   window.open(location.map, "_blank");
                                 }}
-                                className="flex items-center space-x-1 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors duration-200"
+                                className={`flex items-center space-x-1 px-2 py-1 ${modernButtonStyle.base} ${modernButtonStyle.hover} ${modernButtonStyle.shadow} ${modernButtonStyle.transition} rounded text-xs font-bold`}
                               >
                                 <svg
                                   className="w-3 h-3"
@@ -229,7 +285,7 @@ const NFTBenefitsPage = () => {
                                   e.stopPropagation();
                                   window.open(location.web, "_blank");
                                 }}
-                                className="flex items-center space-x-1 px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors duration-200"
+                                className={`flex items-center space-x-1 px-2 py-1 ${modernButtonStyle.base} ${modernButtonStyle.hover} ${modernButtonStyle.shadow} ${modernButtonStyle.transition} rounded text-xs font-bold`}
                               >
                                 <svg
                                   className="w-3 h-3"

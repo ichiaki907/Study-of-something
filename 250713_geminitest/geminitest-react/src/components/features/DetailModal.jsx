@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { getImageUrl, handleImageError } from "../../utils/stampUtils";
+import { getModernButtonStyle } from "../../utils/app-utils";
 
 const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -10,6 +11,9 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const modalRef = useRef(null);
   const { currentTheme } = useTheme();
+  
+  // モダンボタンスタイルを取得
+  const modernButtonStyle = getModernButtonStyle();
 
   // モーダルの開閉時にbodyのスクロールを制御
   useEffect(() => {
@@ -278,7 +282,7 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
                         獲得状況：
                       </span>
                       <span className="text-xs text-gray-700 flex-1">
-                        {displayData.isStamped ? "獲得済み" : "未獲得"}
+                        {displayData.isStamped ? "獲得済" : "未獲得"}
                       </span>
                     </div>
                   )}
@@ -291,7 +295,7 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
                   {displayData.map && (
                     <button
                       onClick={() => window.open(displayData.map, "_blank")}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                      className={`flex items-center space-x-2 px-4 py-2 ${modernButtonStyle.base} ${modernButtonStyle.hover} ${modernButtonStyle.shadow} ${modernButtonStyle.transition} rounded-lg`}
                     >
                       <svg
                         className="w-4 h-4"
@@ -312,13 +316,13 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
                           d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                         />
                       </svg>
-                      <span className="text-sm font-medium">MAP</span>
+                      <span className="text-sm font-bold">MAP</span>
                     </button>
                   )}
                   {displayData.web && (
                     <button
                       onClick={() => window.open(displayData.web, "_blank")}
-                      className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200"
+                      className={`flex items-center space-x-2 px-4 py-2 ${modernButtonStyle.base} ${modernButtonStyle.hover} ${modernButtonStyle.shadow} ${modernButtonStyle.transition} rounded-lg`}
                     >
                       <svg
                         className="w-4 h-4"
@@ -333,7 +337,7 @@ const DetailModal = ({ isOpen, onClose, data, type = "stamp" }) => {
                           d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9m0 9c-5 0-9-4-9-9s4-9 9-9"
                         />
                       </svg>
-                      <span className="text-sm font-medium">WEB</span>
+                      <span className="text-sm font-bold">WEB</span>
                     </button>
                   )}
                 </div>

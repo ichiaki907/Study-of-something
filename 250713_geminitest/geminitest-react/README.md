@@ -70,13 +70,7 @@ const DEFAULT_CONFIG = {
       overlay: "rgba(0, 0, 0, 0.3)", // オーバーレイ（必要に応じて調整）
     },
     
-    // テキスト設定（画像に重ねて表示）
-    text: {
-      enabled: true, // テキスト表示の有効/無効
-      title: "スタンプラリー",
-      description: "スタンプを集めて素敵な特典をゲットしよう！",
-      color: "text-white",
-    },
+
     
     // 開催期間表示設定
     eventPeriod: {
@@ -116,35 +110,6 @@ image: {
   url: "https://example.com/image.jpg",
   alt: "キービジュアル",
   overlay: "rgba(59, 130, 246, 0.6)", // 青系のオーバーレイ
-}
-```
-
-### テキスト設定
-
-#### テキストを表示する
-```javascript
-text: {
-  enabled: true,
-  title: "スタンプラリー",
-  description: "スタンプを集めて素敵な特典をゲットしよう！",
-  color: "text-white",
-}
-```
-
-#### テキストを非表示にする
-```javascript
-text: {
-  enabled: false, // テキストを無効化
-}
-```
-
-#### カスタムテキストカラー
-```javascript
-text: {
-  enabled: true,
-  title: "スタンプラリー",
-  description: "スタンプを集めて素敵な特典をゲットしよう！",
-  color: "text-yellow-300", // カスタムカラー
 }
 ```
 

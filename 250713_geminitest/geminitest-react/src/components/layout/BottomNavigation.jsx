@@ -1,8 +1,9 @@
 import React from "react";
-import { useTheme } from "../../contexts/ThemeContext";
+import { getThemeColors, getThemeColor } from "../../utils/app-utils";
 
 const BottomNavigation = ({ activeTab, onTabChange }) => {
-  const { currentTheme } = useTheme();
+  const themeColor = getThemeColor();
+  const themeColors = getThemeColors(themeColor);
 
   const tabs = [
     {
@@ -98,7 +99,7 @@ const BottomNavigation = ({ activeTab, onTabChange }) => {
             onClick={() => onTabChange(tab.id)}
             className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 ${
               activeTab === tab.id
-                ? `text-${currentTheme}-600`
+                ? `${themeColors.primary.replace('bg-', 'text-')}`
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >

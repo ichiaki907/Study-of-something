@@ -9,6 +9,7 @@ const StampDisplay = ({
   columns = 2,
   onColumnsChange,
   locations = [],
+  config = {},
 }) => {
   const [modalData, setModalData] = useState({
     isOpen: false,
@@ -32,16 +33,18 @@ const StampDisplay = ({
 
   return (
     <div className="w-full">
-      <div className="flex justify-end mb-4 space-x-1">
-        <button
-          onClick={() => handleColumnChange(2)}
-          className={`p-1.5 rounded transition-all duration-200 ${
-            columns === 2
-              ? `bg-${currentTheme}-500 text-white shadow-sm`
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-          }`}
-          title="2列表示"
-        >
+      {/* 列数切り替えボタン（設定で有効な場合のみ表示） */}
+      {config.allowColumnToggle && (
+        <div className="flex justify-end mb-4 space-x-1">
+          <button
+            onClick={() => handleColumnChange(2)}
+            className={`p-1.5 rounded transition-all duration-200 ${
+              columns === 2
+                ? `bg-${currentTheme}-500 text-white shadow-sm`
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+            title="2列表示"
+          >
           <div className="w-3 h-3">
             <div className="grid grid-cols-2 gap-0.5 w-full h-full">
               <div
@@ -111,7 +114,8 @@ const StampDisplay = ({
             </div>
           </div>
         </button>
-      </div>
+        </div>
+      )}
       <div
         className={`grid gap-4 ${
           columns === 2 ? "grid-cols-2" : "grid-cols-3"
@@ -122,7 +126,7 @@ const StampDisplay = ({
             key={location.id}
             number={location.id}
             isStamped={location.isStamped}
-            locationName={location.name}
+            locationName={config.showLocationNames ? location.name : undefined}
             image={location.image}
             onClick={() =>
               handleStampClick({

@@ -5,7 +5,7 @@
 
 ## ファイル一覧
 
-### 1. `app-settings.json` - アプリケーション基本設定
+### 1. `app-settings.json` - アプリケーション基本設定（編集可能）
 アプリケーションの基本情報を設定します。
 **注意**: `.jsonc`ファイルはコメント付きJSONファイルです。各設定項目にコメントが付いているので、設定の意味が分かりやすくなっています。
 
@@ -13,11 +13,11 @@
 - **アプリ名**: `appInfo.name`
 - **アプリの説明**: `appInfo.description`
 - **ページタイトル**: `appInfo.pageTitle`
+- **テーマカラー**: `appInfo.themeColor` ("red", "blue", "green", "purple", "orange", "teal", "indigo", "pink")
+- **ファビコン**: `appInfo.favicon` (ファビコンファイルを`public`フォルダに配置)
 - **開催期間**: `eventPeriod.startDate`, `eventPeriod.endDate`
 - **キービジュアル画像**: `keyVisual.image.url` (画像ファイルを`public`フォルダに配置)
-- **テキスト表示**: `keyVisual.text.enabled` (true/false)
 - **スタンプ表示列数**: `stampDisplay.defaultColumns` (1, 2, 3)
-- **テーマカラー**: `appInfo.themeColor` ("primary", "blue", "green", "purple")
 
 #### 例：
 ```json
@@ -25,19 +25,18 @@
   "appInfo": {
     "name": "私のスタンプラリー",
     "description": "楽しいスタンプ集めをしましょう！",
-    "pageTitle": "私のスタンプラリー"
+    "pageTitle": "私のスタンプラリー",
+    "themeColor": "green",
+    "favicon": "/favicon.ico"
   },
   "eventPeriod": {
     "startDate": "2025年1月1日",
     "endDate": "2025年12月31日"
-  },
-  "appInfo": {
-    "themeColor": "green"
   }
 }
 ```
 
-### 2. `stamps.json` - スタンプデータ
+### 2. `stamps.json` - スタンプデータ（編集可能）
 スタンプラリーで使用するスタンプの情報を設定します。
 
 #### 各スタンプに必要な情報：
@@ -64,17 +63,21 @@
 }
 ```
 
-### 3. `benefits.json` - 特典データ
+### 3. `benefits.json` - 特典データ（編集可能）
 スタンプを集めた際の特典情報を設定します。
 
 ### 4. テーマ設定について
 アプリケーションの色合いを変更できます。
 
 #### 利用可能なテーマ：
-- **primary**: ピンク系（元のデザイン）
+- **red**: レッド系（情熱的な赤系）
 - **blue**: ブルー系（爽やかな青系）
 - **green**: グリーン系（自然な緑系）
 - **purple**: パープル系（高級感のある紫系）
+- **orange**: オレンジ系（温かみのあるオレンジ系）
+- **teal**: ティール系（落ち着いた青緑系）
+- **indigo**: インディゴ系（深みのある藍系）
+- **pink**: ピンク系（可愛らしいピンク系）
 
 #### テーマの変更方法：
 `app-settings.json`の`appInfo.themeColor`を変更するだけです：

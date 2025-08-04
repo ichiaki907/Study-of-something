@@ -1,9 +1,8 @@
 import React from "react";
-import { getKeyVisual, getAppInfo, getEventPeriod, getThemeBackgroundColor, getThemeTextColor } from "../../utils/app-utils";
+import { getKeyVisual, getEventPeriod, getThemeBackgroundColor, getThemeTextColor } from "../../utils/app-utils";
 
 const KeyVisual = () => {
   const config = getKeyVisual();
-  const appInfo = getAppInfo();
   const eventPeriod = getEventPeriod();
   const [imageError, setImageError] = React.useState(false);
   const themeBackgroundColor = getThemeBackgroundColor();
@@ -26,7 +25,7 @@ const KeyVisual = () => {
         {eventPeriod.showOnKeyVisual && (
           <div className={`${eventPeriod.backgroundColor || themeBackgroundColor}`}>
             <div className="w-full px-3 py-3">
-              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-medium text-center ${eventPeriod.textColor || themeTextColor}`}>
+              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-bold text-center ${eventPeriod.textColor || themeTextColor}`}>
                 {eventPeriod.displayFormat
                   .replace("{startDate}", eventPeriod.startDate)
                   .replace("{endDate}", eventPeriod.endDate)}
@@ -57,25 +56,13 @@ const KeyVisual = () => {
               style={{ backgroundColor: config.image.overlay }}
             />
           )}
-
-          {/* テキストコンテンツ */}
-          {config.text.enabled && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
-              <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold mb-2 ${config.text.color}`}>
-                {config.text.title || appInfo.name}
-              </h1>
-              <p className={`text-xs sm:text-sm md:text-base opacity-90 leading-relaxed ${config.text.color}`}>
-                {config.text.description || appInfo.description}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* 開催期間 */}
         {eventPeriod.showOnKeyVisual && (
           <div className={`${eventPeriod.backgroundColor || themeBackgroundColor} backdrop-blur-sm`}>
             <div className="w-full px-3 py-3">
-              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-medium text-center ${eventPeriod.textColor || themeTextColor}`}>
+              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-bold text-center ${eventPeriod.textColor || themeTextColor}`}>
                 {eventPeriod.displayFormat
                   .replace("{startDate}", eventPeriod.startDate)
                   .replace("{endDate}", eventPeriod.endDate)}

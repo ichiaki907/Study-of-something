@@ -1,0 +1,17 @@
+{
+  "defaults": {
+    "stamp": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop",
+    "benefit": "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400&h=300&fit=crop",
+    "nft": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=300&fit=crop"
+  },
+  "sizes": {
+    "small": "w=200&h=150&fit=crop",
+    "medium": "w=400&h=300&fit=crop",
+    "large": "w=800&h=600&fit=crop"
+  },
+  "quality": {
+    "low": "&q=50",
+    "medium": "&q=75",
+    "high": "&q=100"
+  }
+} 
