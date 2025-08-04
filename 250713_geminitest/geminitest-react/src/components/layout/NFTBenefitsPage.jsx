@@ -6,11 +6,13 @@ import SectionHeader from "../ui/SectionHeader";
 import BenefitCard from "../features/BenefitCard";
 import BottomNavigation from "./BottomNavigation";
 import DetailModal from "../features/DetailModal";
+import HowToParticipate from "../features/HowToParticipate";
+import Footer from "./Footer";
 import { getBenefitsData } from "../../utils/benefitUtils";
 import { getStampsData, getStampStatus, getImageUrl, handleImageError } from "../../utils/stampUtils";
 import { getThemeColors, getThemeColor, getModernButtonStyle, getStampDisplay } from "../../utils/app-utils";
 
-const NFTBenefitsPage = () => {
+const NFTBenefitsPage = ({ activeTab: externalActiveTab, onTabChange }) => {
   // テーマカラーを取得
   const themeColor = getThemeColor();
   const themeColors = getThemeColors(themeColor);
@@ -25,7 +27,7 @@ const NFTBenefitsPage = () => {
     return saved ? parseInt(saved, 10) : stampDisplayConfig.defaultColumns || 2;
   });
 
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState(externalActiveTab || "home");
   const [modalData, setModalData] = useState({
     isOpen: false,
     data: null,
@@ -85,6 +87,13 @@ const NFTBenefitsPage = () => {
   const benefitsSectionRef = useRef(null);
   const spotsSectionRef = useRef(null);
 
+  // 外部のactiveTabが変更されたときに内部状態を更新
+  useEffect(() => {
+    if (externalActiveTab && externalActiveTab !== activeTab) {
+      setActiveTab(externalActiveTab);
+    }
+  }, [externalActiveTab, activeTab]);
+
   // スクロール監視と背景色統一のためのuseEffect
   useEffect(() => {
     // ページ全体の背景色を白に統一（最小限の設定）
@@ -105,6 +114,9 @@ const NFTBenefitsPage = () => {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
 
     // 手動クリック時は一時的にスクロール監視を無効化
     const handleScrollEnd = () => {
@@ -314,8 +326,18 @@ const NFTBenefitsPage = () => {
           </SectionHeader>
         </div>
 
+        {/* 参加方法セクション */}
+        <div className="bg-white shadow-md overflow-hidden">
+          <SectionHeader title="参加方法">
+            <HowToParticipate />
+          </SectionHeader>
+        </div>
+
+        {/* フッター */}
+        <Footer />
+
         {/* 下部の余白 - ボトムナビゲーションの高さ分を確保 */}
-        <div className="h-24 bg-white"></div>
+        <div className="h-12 bg-white"></div>
 
         {/* ボトムナビゲーション */}
         <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-md">

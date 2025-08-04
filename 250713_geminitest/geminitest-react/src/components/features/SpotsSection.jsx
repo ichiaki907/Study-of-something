@@ -21,7 +21,7 @@ const SpotsSection = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div id="spots-section" className="space-y-4">
       <SectionHeader title="スポット情報">
         <div className="space-y-4">
           {spots.map((spot) => (
