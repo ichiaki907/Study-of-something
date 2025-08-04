@@ -60,7 +60,7 @@ const HowToParticipate = () => {
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <div className="p-4 text-center">
                 <div className="mb-3">
