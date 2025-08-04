@@ -1,21 +1,39 @@
 import React from "react";
-import { getKeyVisualConfig, APP_CONFIG } from "../../config/appConfig";
+import { getKeyVisual, getAppInfo, getEventPeriod, getThemeBackgroundColor, getThemeTextColor } from "../../utils/app-utils";
 
 const KeyVisual = () => {
-  const config = getKeyVisualConfig();
+  const config = getKeyVisual();
+  const appInfo = getAppInfo();
+  const eventPeriod = getEventPeriod();
+  const [imageError, setImageError] = React.useState(false);
+  const themeBackgroundColor = getThemeBackgroundColor();
+  const themeTextColor = getThemeTextColor();
   
-  // 画像が設定されていない場合のフォールバック
-  if (!config.image.url) {
+  // 画像が設定されていない場合、または画像エラーの場合のフォールバック
+  if (!config.image.url || imageError) {
     return (
       <div className="w-full bg-gray-200">
         <div className="w-full max-w-md mx-auto">
           <div className="aspect-square flex items-center justify-center">
             <div className="text-center text-gray-500">
               <p className="text-lg font-medium mb-2">キービジュアル画像を設定してください</p>
-              <p className="text-sm">appConfig.js の keyVisual.image.url に画像URLを設定してください</p>
+              <p className="text-sm">app-settings.json の keyVisual.image.url に画像URLを設定してください</p>
             </div>
           </div>
         </div>
+        
+        {/* 開催期間（画像がない場合でも表示） */}
+        {eventPeriod.showOnKeyVisual && (
+          <div className={`${eventPeriod.backgroundColor || themeBackgroundColor}`}>
+            <div className="w-full px-3 py-3">
+              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-medium text-center ${eventPeriod.textColor || themeTextColor}`}>
+                {eventPeriod.displayFormat
+                  .replace("{startDate}", eventPeriod.startDate)
+                  .replace("{endDate}", eventPeriod.endDate)}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -29,6 +47,7 @@ const KeyVisual = () => {
             src={config.image.url}
             alt={config.image.alt}
             className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
           />
           
           {/* オーバーレイ */}
@@ -43,23 +62,23 @@ const KeyVisual = () => {
           {config.text.enabled && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
               <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold mb-2 ${config.text.color}`}>
-                {config.text.title || APP_CONFIG.appInfo.name}
+                {config.text.title || appInfo.name}
               </h1>
               <p className={`text-xs sm:text-sm md:text-base opacity-90 leading-relaxed ${config.text.color}`}>
-                {config.text.description || APP_CONFIG.appInfo.description}
+                {config.text.description || appInfo.description}
               </p>
             </div>
           )}
         </div>
 
         {/* 開催期間 */}
-        {config.eventPeriod.enabled && (
-          <div className="bg-white/10 backdrop-blur-sm">
+        {eventPeriod.showOnKeyVisual && (
+          <div className={`${eventPeriod.backgroundColor || themeBackgroundColor} backdrop-blur-sm`}>
             <div className="w-full px-3 py-3">
-              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-medium text-center ${config.eventPeriod.color}`}>
-                {APP_CONFIG.eventPeriod.displayFormat
-                  .replace("{startDate}", APP_CONFIG.eventPeriod.startDate)
-                  .replace("{endDate}", APP_CONFIG.eventPeriod.endDate)}
+              <p className={`text-[8px] xs:text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg font-medium text-center ${eventPeriod.textColor || themeTextColor}`}>
+                {eventPeriod.displayFormat
+                  .replace("{startDate}", eventPeriod.startDate)
+                  .replace("{endDate}", eventPeriod.endDate)}
               </p>
             </div>
           </div>

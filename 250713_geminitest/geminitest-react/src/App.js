@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import NFTBenefitsPage from "./components/layout/NFTBenefitsPage";
-import { initializeApp } from "./config/appConfig";
+import { initializeApp } from "./utils/app-utils";
 
 function App() {
   useEffect(() => {
