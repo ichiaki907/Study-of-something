@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>めぐり旅 — NFTで育つマイページ（モック）</title>
+<style>
+  :root {
+    --bg1: #fff7f0;
+    --bg2: #eef4ff;
+    --panel: #ffffff;
+    --panel-soft: #f6f7fc;
+    --line: #ececf3;
+    --text: #2a2d43;
+    --muted: #8b90a8;
+    --accent: #ff7a59;   /* コーラル */
+    --accent2: #5b8def;  /* 青 */
+    --yellow: #ffc24b;
+    --pink: #ff7eb6;
+    --good: #2fc197;
+    --shadow: 0 10px 30px rgba(90, 100, 150, 0.16);
+    --shadow-sm: 0 4px 14px rgba(90, 100, 150, 0.12);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(900px 500px at 15% -10%, #ffe9dd 0%, transparent 55%),
+      radial-gradient(900px 500px at 100% 5%, #e3edff 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .device {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #fffdfb 0%, #f5f8ff 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ===== ヘッダー ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    backdrop-filter: blur(8px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.55));
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 800; letter-spacing: .02em; }
+  .brand .logo {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--yellow));
+    display: grid; place-items: center; font-size: 16px;
+    box-shadow: 0 4px 12px rgba(255,140,90,.4);
+  }
+  .brand small { display:block; font-size: 10px; color: var(--muted); font-weight: 600; }
+  .coin {
+    display: flex; align-items: center; gap: 6px;
+    background: #fff5e8; border: 1px solid #ffe2bd; color: #c9742a;
+    padding: 6px 11px; border-radius: 999px; font-weight: 800; font-size: 13px;
+  }
+
+  /* ===== ページ切り替え ===== */
+  .pages { flex: 1; overflow-y: auto; padding-bottom: 92px; }
+  .page { display: none; animation: fade .35s ease; }
+  .page.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+
+  /* ===== ステージ（成長するキャラ＆背景） ===== */
+  .stage {
+    position: relative;
+    height: 360px;
+    margin: 12px 16px 0;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+    transition: background .8s ease;
+    background: linear-gradient(180deg, #cfe9ff, #f0f9ff);
+  }
+  .stage .sky, .stage .ground, .stage .deco { position: absolute; inset: 0; pointer-events: none; }
+  .stage .ground {
+    top: auto; height: 30%;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.35) 100%);
+  }
+  .cityline {
+    position:absolute; left:0; right:0; bottom:0; height:46%;
+    background-repeat: repeat-x; background-position: bottom; opacity: 0; transition: opacity .8s ease;
+  }
+  .floaters span {
+    position: absolute; font-size: 22px; opacity: 0; transform: translateY(8px);
+    transition: opacity .8s ease, transform .8s ease;
+    filter: drop-shadow(0 4px 6px rgba(120,130,170,.35));
+  }
+  .floaters span.show { opacity: 1; transform: none; }
+
+  /* キャラクター */
+  .hero {
+    position: absolute;
+    left: 50%; bottom: 16%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+  }
+  .hero .aura {
+    position: absolute; left: 50%; top: 50%;
+    width: 190px; height: 190px; transform: translate(-50%,-50%) scale(.4);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,194,75,.65), transparent 65%);
+    opacity: 0; transition: all .8s ease;
+  }
+  .hero.lv-3 .aura { opacity: .7; transform: translate(-50%,-50%) scale(.85); }
+  .hero.lv-4 .aura, .hero.lv-5 .aura, .hero.lv-6 .aura { opacity: 1; transform: translate(-50%,-50%) scale(1.15); }
+  .mascot {
+    font-size: 84px; line-height: 1;
+    display: inline-block; position: relative; z-index: 2;
+    animation: bob 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 12px rgba(120,130,170,.4));
+    transition: font-size .6s ease;
+  }
+  @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-10px);} }
+  .accessory {
+    position: absolute; font-size: 30px; opacity: 0; transition: all .6s ease; z-index: 3;
+  }
+  .accessory.show { opacity: 1; }
+  .acc-hat   { top: -8px;  left: 50%; transform: translateX(-50%); }
+  .acc-crown { top: -22px; left: 50%; transform: translateX(-50%); }
+  .acc-left  { top: 30px;  left: -26px; }
+  .acc-right { top: 30px;  right: -26px; }
+
+  .stage-label {
+    position: absolute; top: 14px; left: 14px; z-index: 8;
+    background: rgba(255,255,255,.85); border: 1px solid var(--line); color: var(--text);
+    padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 800;
+    backdrop-filter: blur(4px); box-shadow: var(--shadow-sm);
+  }
+  .rank-pill {
+    position:absolute; top: 14px; right: 14px; z-index: 8;
+    padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, var(--accent2), var(--pink));
+    box-shadow: 0 6px 14px rgba(91,141,239,.4);
+  }
+
+  /* 進捗カード */
+  .panel {
+    margin: 16px; padding: 16px;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+  }
+  .panel h2 { margin: 0 0 4px; font-size: 16px; }
+  .panel .sub { color: var(--muted); font-size: 12.5px; margin: 0 0 14px; }
+  .progress {
+    height: 12px; border-radius: 999px; background: #eef0f7;
+    overflow: hidden; border: 1px solid var(--line);
+  }
+  .progress > i {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--yellow));
+    width: 0; transition: width .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .progress-meta { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+  .progress-meta b { color: var(--text); }
+
+  /* 集めたNFTのミニ列 */
+  .mini-collection { display: flex; gap: 10px; margin: 16px 16px 22px; overflow-x: auto; padding-bottom: 4px; }
+  .mini-collection::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto; width: 64px; height: 64px; border-radius: 16px;
+    display: grid; place-items: center; font-size: 26px;
+    background: var(--panel-soft); border: 1px solid var(--line);
+    position: relative; box-shadow: var(--shadow-sm);
+  }
+  .chip.locked { opacity: .55; filter: grayscale(.6); }
+  .chip small {
+    position: absolute; bottom: -18px; left: 0; right: 0; text-align: center;
+    font-size: 9px; color: var(--muted); white-space: nowrap;
+  }
+  .section-title {
+    display:flex; align-items:center; justify-content: space-between;
+    margin: 26px 18px 6px; font-size: 14px; font-weight: 800; letter-spacing:.02em;
+  }
+  .section-title a { color: var(--accent2); font-size: 12px; text-decoration: none; cursor: pointer; }
+
+  /* 次に行くスポット（おすすめ） */
+  .next-card {
+    margin: 8px 16px; padding: 16px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #fff1ea, #eef4ff);
+    border: 1px solid #ffd9c9;
+    position: relative; overflow: hidden; box-shadow: var(--shadow-sm);
+  }
+  .next-card .tag {
+    display:inline-block; font-size: 11px; font-weight: 800; color:#fff;
+    background: var(--accent); padding: 3px 9px; border-radius: 999px; margin-bottom: 8px;
+  }
+  .next-card h3 { margin: 0 0 4px; font-size: 18px; }
+  .next-card p { margin: 0; color: var(--muted); font-size: 12.5px; }
+  .next-card .meta { display:flex; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .next-card .meta b { color: var(--text); }
+
+  /* スポット一覧 */
+  .spot {
+    display: flex; gap: 14px; align-items: center;
+    margin: 10px 16px; padding: 14px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .spot .ic {
+    width: 52px; height: 52px; border-radius: 14px; flex: 0 0 auto;
+    display: grid; place-items: center; font-size: 26px;
+    background: var(--panel-soft); border: 1px solid var(--line);
+  }
+  .spot .info { flex: 1; min-width: 0; }
+  .spot .info h4 { margin: 0 0 2px; font-size: 15px; }
+  .spot .info p { margin: 0; font-size: 12px; color: var(--muted); }
+  .spot .status { font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+  .status.done { background: #e3f8f1; color: var(--good); border: 1px solid #b7ecdc; }
+  .status.todo { background: #fff3e2; color: #d98a2b; border: 1px solid #ffe0b8; }
+
+  .btn {
+    appearance: none; border: none; cursor: pointer;
+    font-weight: 800; font-size: 14px; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--yellow));
+    padding: 13px 18px; border-radius: 14px; width: 100%;
+    box-shadow: 0 8px 18px rgba(255,140,90,.35);
+    transition: transform .12s ease, opacity .2s;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn.ghost { background: var(--panel); color: var(--text); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-row { display:flex; gap: 10px; margin: 14px 16px 0; }
+
+  /* コレクショングリッド */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 12px 16px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 16px; text-align: center; position: relative; box-shadow: var(--shadow-sm);
+  }
+  .card .big { font-size: 46px; }
+  .card.locked .big { filter: grayscale(1); opacity: .35; }
+  .card h4 { margin: 8px 0 2px; font-size: 14px; }
+  .card p { margin: 0; font-size: 11px; color: var(--muted); }
+  .card .ribbon {
+    position:absolute; top:10px; right:10px; font-size: 10px; font-weight: 800;
+    padding: 3px 8px; border-radius: 999px;
+  }
+  .ribbon.have { background: #e3f8f1; color: var(--good); }
+  .ribbon.lock { background: #eef0f7; color: var(--muted); }
+
+  /* ===== モック設定パネル ===== */
+  .mock-panel {
+    margin: 12px 16px; padding: 16px;
+    background: #fffdf7; border: 1px dashed #f0c98a; border-radius: var(--radius);
+  }
+  .mock-panel .mh { display:flex; align-items:center; gap:8px; font-weight: 800; font-size: 14px; margin-bottom: 4px; }
+  .mock-panel .ms { color: var(--muted); font-size: 12px; margin: 0 0 14px; }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-top: 1px solid #f1ead8;
+  }
+  .toggle-row:first-of-type { border-top: none; }
+  .toggle-row .lab { display:flex; align-items:center; gap: 10px; font-size: 13.5px; font-weight: 700; }
+  .toggle-row .lab .e { font-size: 20px; }
+  .switch { position: relative; width: 46px; height: 26px; flex: 0 0 auto; cursor: pointer; }
+  .switch input { display: none; }
+  .switch .track {
+    position:absolute; inset:0; border-radius: 999px; background: #d9dced; transition: background .25s;
+  }
+  .switch .knob {
+    position:absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+    background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.2); transition: transform .25s;
+  }
+  .switch input:checked + .track { background: var(--good); }
+  .switch input:checked + .track + .knob { transform: translateX(20px); }
+  .quick-set { display:flex; gap: 8px; margin-top: 14px; }
+  .quick-set button {
+    flex: 1; appearance: none; cursor: pointer; font-weight: 800; font-size: 12px;
+    padding: 9px 0; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--panel-soft); color: var(--text); transition: transform .1s;
+  }
+  .quick-set button:active { transform: scale(.97); }
+
+  /* ===== ボトムナビ ===== */
+  .tabbar {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    background: rgba(255,255,255,.95); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line); padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  }
+  .tab {
+    appearance: none; background: none; border: none; cursor: pointer;
+    color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 10.5px; font-weight: 700; padding: 6px 0; border-radius: 12px;
+    transition: color .2s;
+  }
+  .tab .ti { font-size: 21px; }
+  .tab.active { color: var(--accent); }
+
+  /* トースト & 獲得演出 */
+  .toast {
+    position: absolute; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: #fff; padding: 11px 18px; border-radius: 999px;
+    font-weight: 800; font-size: 13px; opacity: 0; z-index: 60;
+    box-shadow: 0 10px 26px rgba(0,0,0,.25); transition: all .35s ease; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .reveal {
+    position: absolute; inset: 0; z-index: 70; display: none;
+    place-items: center; background: rgba(40,45,70,.45); backdrop-filter: blur(6px);
+  }
+  .reveal.show { display: grid; animation: fade .3s ease; }
+  .reveal .box {
+    text-align: center; animation: pop .5s cubic-bezier(.2,1.4,.4,1);
+    background: #fff; border-radius: 24px; padding: 28px 30px; box-shadow: var(--shadow);
+    border: 1px solid var(--line); margin: 0 24px;
+  }
+  @keyframes pop { from { transform: scale(.5); opacity: 0;} to { transform: scale(1); opacity:1; } }
+  .reveal .nft {
+    font-size: 96px; filter: drop-shadow(0 12px 22px rgba(255,170,80,.45));
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  .reveal h3 { margin: 12px 0 2px; }
+  .reveal p { margin: 0 0 20px; color: var(--muted); }
+  .reveal .btn { width: auto; padding: 12px 30px; }
+
+  .hint { text-align:center; color: var(--muted); font-size: 11px; margin: 18px 16px 24px; line-height: 1.7; }
+</style>
+</head>
+<body>
+  <div class="device">
+    <!-- ヘッダー -->
+    <div class="topbar">
+      <div class="brand">
+        <span class="logo">🧭</span>
+        <div>めぐり旅
+          <small>NFTで育つ、わたしの旅</small>
+        </div>
+      </div>
+      <div class="coin">✨ <span id="coinCount">0</span> / 6</div>
+    </div>
+
+    <div class="pages">
+      <!-- ============ マイページ ============ -->
+      <section class="page active" id="page-home">
+        <div class="stage" id="stage">
+          <div class="sky"></div>
+          <div class="cityline" id="cityline"></div>
+          <div class="floaters" id="floaters">
+            <span style="top:18%; left:14%">☁️</span>
+            <span style="top:12%; right:18%">⭐</span>
+            <span style="top:30%; right:10%">🎈</span>
+            <span style="top:24%; left:8%">🕊️</span>
+            <span style="top:8%; left:42%">🎆</span>
+            <span style="top:40%; left:26%">✨</span>
+          </div>
+          <div class="ground"></div>
+
+          <div class="stage-label" id="stageLabel">朝もやの旅立ち</div>
+          <div class="rank-pill" id="rankPill">RANK F</div>
+
+          <div class="hero" id="hero">
+            <div class="aura"></div>
+            <span class="accessory acc-crown" id="accCrown">👑</span>
+            <span class="accessory acc-hat" id="accHat">🎩</span>
+            <span class="accessory acc-left" id="accLeft">📜</span>
+            <span class="accessory acc-right" id="accRight">🗡️</span>
+            <span class="mascot" id="mascot">🦊</span>
+          </div>
+        </div>
+
+        <!-- 集めたNFTミニ列 -->
+        <div class="mini-collection" id="miniCollection"></div>
+
+        <!-- 進捗 -->
+        <div class="panel">
+          <h2>旅の成長度</h2>
+          <p class="sub">スポットでNFTを集めるほど、相棒と世界が豪華に育ちます。</p>
+          <div class="progress"><i id="progressBar"></i></div>
+          <div class="progress-meta">
+            <span>現在 <b id="metaRank">RANK F</b></span>
+            <span><b id="metaCount">0</b> / 6 個獲得</span>
+          </div>
+        </div>
+
+        <!-- 次に行くべきスポット -->
+        <div class="section-title">次に行きたいスポット <a id="goSpots">すべて見る ›</a></div>
+        <div class="next-card" id="nextCard">
+          <span class="tag">おすすめ</span>
+          <h3 id="nextName">—</h3>
+          <p id="nextDesc">—</p>
+          <div class="meta">
+            <span>📍 <b id="nextDist">—</b></span>
+            <span>🎁 <b id="nextReward">—</b></span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="collectBtn">📷 現地でNFTを獲得する</button>
+        </div>
+        <p class="hint">※これはモックです。ボタンで取得をシミュレートします。<br>実際はスポットのQR読み取り等で獲得する想定です。</p>
+      </section>
+
+      <!-- ============ スポット ============ -->
+      <section class="page" id="page-spots">
+        <div class="section-title">めぐるスポット</div>
+        <p class="hint" style="margin-top:0; text-align:left">対象スポットを巡って、その土地のNFTを集めよう。</p>
+        <div id="spotList"></div>
+      </section>
+
+      <!-- ============ コレクション ============ -->
+      <section class="page" id="page-collection">
+        <div class="section-title">わたしのコレクション</div>
+        <p class="hint" style="margin-top:0; text-align:left">獲得したNFTがマイページの相棒と世界を彩ります。</p>
+        <div class="grid" id="collectionGrid"></div>
+
+        <!-- モック用：1〜6 を手動設定 -->
+        <div class="section-title">モック設定</div>
+        <div class="mock-panel">
+          <div class="mh">🛠️ NFTの所持を手動設定</div>
+          <p class="ms">デモ用。各スポットのNFTを個別にON/OFFして、マイページの見た目を確認できます。</p>
+          <div id="toggleList"></div>
+          <div class="quick-set">
+            <button data-set="0">すべてOFF</button>
+            <button data-set="3">3個に設定</button>
+            <button data-set="6">すべてON</button>
+          </div>
+        </div>
+        <p class="hint"></p>
+      </section>
+    </div>
+
+    <!-- ボトムナビ -->
+    <nav class="tabbar">
+      <button class="tab active" data-page="home"><span class="ti">🏠</span>マイページ</button>
+      <button class="tab" data-page="spots"><span class="ti">🗺️</span>スポット</button>
+      <button class="tab" data-page="collection"><span class="ti">🎴</span>コレクション</button>
+    </nav>
+
+    <!-- トースト -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 獲得演出 -->
+    <div class="reveal" id="reveal">
+      <div class="box">
+        <div class="nft" id="revealIcon">🎴</div>
+        <h3 id="revealTitle">NFTをゲット！</h3>
+        <p id="revealSub"></p>
+        <button class="btn" id="revealClose">うけとる</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== データ =====
+  const SPOTS = [
+    { id:0, name:"港町ベイサイド",   icon:"⚓", nft:"🐚", desc:"潮風のレトロ商店街。最初の一歩にぴったり。", dist:"今いる場所", reward:"潮騒の貝NFT" },
+    { id:1, name:"レンガ倉庫タウン", icon:"🧱", nft:"🍵", desc:"歴史ある倉庫群とカフェ巡り。", dist:"徒歩12分", reward:"赤レンガNFT" },
+    { id:2, name:"丘の上の展望台",   icon:"🗼", nft:"🌇", desc:"街を一望できる絶景スポット。", dist:"バス15分", reward:"夕景NFT" },
+    { id:3, name:"花咲く植物園",     icon:"🌷", nft:"🌸", desc:"四季の花々と温室を散策。", dist:"電車8分", reward:"花冠NFT" },
+    { id:4, name:"星見の天文台",     icon:"🔭", nft:"⭐", desc:"夜は満天の星空イベントも。", dist:"電車20分", reward:"星屑NFT" },
+    { id:5, name:"古城フェスタ広場", icon:"🏰", nft:"👑", desc:"ラスボス的スポット。集大成の場所。", dist:"電車35分", reward:"王冠NFT" },
+  ];
+
+  // ランク／ステージ定義（獲得数 0..6）— 明るくポップな空
+  const STAGES = [
+    { rank:"F", label:"朝もやの旅立ち", sky:["#dff1ff","#fbfdff"], mascot:64, floaters:0 },
+    { rank:"E", label:"はじまりの港町", sky:["#cfe9ff","#f0f9ff"], mascot:70, floaters:1 },
+    { rank:"D", label:"街めぐりの達人", sky:["#bfe2ff","#e3f4ff"], mascot:76, floaters:2 },
+    { rank:"C", label:"夕焼けの冒険者", sky:["#ffd6a8","#ffc2d6"], mascot:82, floaters:3 },
+    { rank:"B", label:"星降る探検家",   sky:["#cdbcff","#ffe1f0"], mascot:88, floaters:4 },
+    { rank:"A", label:"祭りの主役",     sky:["#ffd86b","#ff9ecb"], mascot:94, floaters:5 },
+    { rank:"S", label:"伝説の旅人",     sky:["#a6ecff","#ffd6f5"], mascot:104, floaters:6 },
+  ];
+
+  const CITYLINE = "data:image/svg+xml;utf8," + encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='430' height='120'>" +
+    "<g fill='rgba(70,82,140,0.28)'>" +
+    "<rect x='10' y='60' width='40' height='60'/><rect x='60' y='40' width='30' height='80'/>" +
+    "<rect x='100' y='70' width='50' height='50'/><rect x='160' y='30' width='34' height='90'/>" +
+    "<rect x='205' y='55' width='44' height='65'/><rect x='260' y='45' width='30' height='75'/>" +
+    "<rect x='300' y='68' width='52' height='52'/><rect x='362' y='38' width='32' height='82'/>" +
+    "<rect x='404' y='60' width='26' height='60'/></g></svg>"
+  );
+
+  // ===== 状態 =====
+  let state = load();
+  function load(){
+    try { return JSON.parse(localStorage.getItem("meguri_state")) || { owned:[] }; }
+    catch(e){ return { owned:[] }; }
+  }
+  function save(){ localStorage.setItem("meguri_state", JSON.stringify(state)); }
+
+  // ===== 描画 =====
+  const $ = (s)=>document.querySelector(s);
+
+  function render(){
+    const n = state.owned.length;
+    const stage = STAGES[Math.min(n, STAGES.length-1)];
+
+    // 背景
+    const st = $("#stage");
+    st.style.background = `linear-gradient(180deg, ${stage.sky[0]}, ${stage.sky[1]})`;
+    $("#cityline").style.backgroundImage = `url("${CITYLINE}")`;
+    $("#cityline").style.opacity = n >= 2 ? .95 : 0;
+
+    // ふわふわ装飾（数に応じて表示）
+    const fl = $("#floaters").children;
+    for (let i=0;i<fl.length;i++) fl[i].classList.toggle("show", i < stage.floaters);
+
+    // キャラ
+    $("#mascot").style.fontSize = stage.mascot + "px";
+    const hero = $("#hero");
+    hero.className = "hero lv-" + Math.min(n,6);
+    $("#accHat").classList.toggle("show", n >= 1 && n < 6);
+    $("#accLeft").classList.toggle("show", n >= 2);
+    $("#accRight").classList.toggle("show", n >= 3);
+    $("#accCrown").classList.toggle("show", n >= 6);
+
+    // ラベル / ランク
+    $("#stageLabel").textContent = stage.label;
+    $("#rankPill").textContent = "RANK " + stage.rank;
+    $("#metaRank").textContent = "RANK " + stage.rank;
+    $("#coinCount").textContent = n;
+    $("#metaCount").textContent = n;
+    $("#progressBar").style.width = (n/6*100) + "%";
+
+    // ミニコレクション
+    $("#miniCollection").innerHTML = SPOTS.map(s=>{
+      const has = state.owned.includes(s.id);
+      return `<div class="chip ${has?'':'locked'}">${has?s.nft:'❔'}<small>${s.name}</small></div>`;
+    }).join("");
+
+    // 次のスポット
+    const next = SPOTS.find(s=>!state.owned.includes(s.id));
+    const nc = $("#nextCard");
+    if (next){
+      $("#nextName").textContent = next.name;
+      $("#nextDesc").textContent = next.desc;
+      $("#nextDist").textContent = next.dist;
+      $("#nextReward").textContent = next.reward;
+      $("#collectBtn").disabled = false;
+      $("#collectBtn").textContent = `📷 「${next.name}」でNFTを獲得`;
+      nc.style.display = "block";
+    } else {
+      $("#nextName").textContent = "コンプリート！🎉";
+      $("#nextDesc").textContent = "全スポット制覇。あなたは伝説の旅人です。";
+      $("#nextDist").textContent = "—";
+      $("#nextReward").textContent = "達成記念NFT";
+      $("#collectBtn").disabled = true;
+      $("#collectBtn").textContent = "✅ すべて獲得済み";
+    }
+
+    // スポット一覧
+    $("#spotList").innerHTML = SPOTS.map(s=>{
+      const has = state.owned.includes(s.id);
+      return `<div class="spot">
+        <div class="ic">${s.icon}</div>
+        <div class="info"><h4>${s.name}</h4><p>${s.desc}<br>📍 ${s.dist}</p></div>
+        <div class="status ${has?'done':'todo'}">${has?'獲得済み':'未取得'}</div>
+      </div>`;
+    }).join("");
+
+    // コレクション
+    $("#collectionGrid").innerHTML = SPOTS.map(s=>{
+      const has = state.owned.includes(s.id);
+      return `<div class="card ${has?'':'locked'}">
+        <span class="ribbon ${has?'have':'lock'}">${has?'所持':'未所持'}</span>
+        <div class="big">${has?s.nft:'🔒'}</div>
+        <h4>${has?s.reward:'？？？'}</h4>
+        <p>${s.name}</p>
+      </div>`;
+    }).join("");
+
+    // モック設定トグル
+    $("#toggleList").innerHTML = SPOTS.map(s=>{
+      const has = state.owned.includes(s.id);
+      return `<div class="toggle-row">
+        <span class="lab"><span class="e">${s.nft}</span>${s.id+1}. ${s.name}</span>
+        <label class="switch">
+          <input type="checkbox" data-id="${s.id}" ${has?'checked':''}>
+          <span class="track"></span><span class="knob"></span>
+        </label>
+      </div>`;
+    }).join("");
+  }
+
+  // ===== 操作 =====
+  function collect(){
+    const next = SPOTS.find(s=>!state.owned.includes(s.id));
+    if (!next) return;
+    state.owned.push(next.id);
+    save();
+    showReveal(next);
+    render();
+  }
+
+  function toggleOwned(id){
+    const i = state.owned.indexOf(id);
+    if (i >= 0) state.owned.splice(i, 1);
+    else state.owned.push(id);
+    save();
+    render();
+  }
+
+  function setCount(n){
+    state.owned = SPOTS.slice(0, n).map(s=>s.id);
+    save();
+    render();
+  }
+
+  function showReveal(spot){
+    $("#revealIcon").textContent = spot.nft;
+    $("#revealTitle").textContent = `${spot.reward} を獲得！`;
+    $("#revealSub").textContent = `${spot.name} のNFTがコレクションに加わりました`;
+    $("#reveal").classList.add("show");
+  }
+
+  let toastTimer;
+  function toast(msg){
+    const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+  }
+
+  function switchPage(name){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    $("#page-"+name).classList.add("active");
+    document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.page===name));
+    $(".pages").scrollTop = 0;
+  }
+
+  // ===== イベント =====
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.addEventListener("click", ()=>switchPage(t.dataset.page));
+  });
+  $("#goSpots").addEventListener("click", ()=>switchPage("spots"));
+  $("#collectBtn").addEventListener("click", collect);
+  $("#revealClose").addEventListener("click", ()=>{
+    $("#reveal").classList.remove("show");
+    const n = state.owned.length;
+    if (n === 6) toast("コンプリート！伝説の旅人に 🎉");
+    else toast("マイページが豪華になりました ✨");
+  });
+
+  // モック設定：個別トグル（イベント委譲）
+  $("#toggleList").addEventListener("change", (e)=>{
+    const cb = e.target.closest("input[type=checkbox]");
+    if (!cb) return;
+    toggleOwned(Number(cb.dataset.id));
+  });
+  // クイック設定ボタン
+  document.querySelectorAll(".quick-set button").forEach(b=>{
+    b.addEventListener("click", ()=>{ setCount(Number(b.dataset.set)); toast("設定を反映しました"); });
+  });
+
+  render();
+</script>
+</body>
+</html>
