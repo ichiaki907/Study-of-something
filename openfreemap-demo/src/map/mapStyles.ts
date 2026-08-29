@@ -3,6 +3,16 @@ import type { MapStyleKey } from '../types'
 /**
  * OpenFreeMap が公開しているホスト型スタイル。
  *
+ * ⚠️ MapLibre GL JS のバージョンについて
+ * OpenFreeMap のスタイルは OpenMapTiles 由来（上流は開発終了済み）で、
+ * レガシー式（legacy expressions）を含んでいる。MapLibre v6 は
+ * style-spec v25 を採用しており、レガシー式に対して
+ * 「silently failing」ではなく warning severity のエラーを投げるため、
+ * データレイヤーが描画されず背景色だけが表示される状態になる。
+ * しかも severity が warning のため map の 'error' イベントにも乗らず、
+ * 原因が分かりにくい。そのため本プロジェクトでは maplibre-gl を
+ * v5 系に固定している。v6 へ上げる場合はスタイル側の対応が必要。
+ *
  * OpenFreeMap は Google Cloud Storage 上でベクトルタイルとスタイルを
  * 無料・無制限（要フェアユース）で配信しており、自前でタイルサーバーや
  * PMTiles を用意しなくてもこの URL をそのまま MapLibre の `style` に

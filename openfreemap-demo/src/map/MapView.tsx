@@ -1,7 +1,6 @@
 import {
   GeolocateControl,
-  type GeolocateErrorEvent,
-  Map as MapLibreMap,
+  MapLibreMap,
   Marker,
   NavigationControl,
 } from 'maplibre-gl'
@@ -73,7 +72,7 @@ export function MapView({
     })
     map.addControl(geolocate, 'top-right')
     // 位置情報が拒否・取得失敗しても例外にせず、コンソールに残すだけにする
-    geolocate.on('error', (event: GeolocateErrorEvent) => {
+    geolocate.on('error', (event: GeolocationPositionError) => {
       console.warn('現在地を取得できませんでした:', event.message)
     })
 
@@ -84,21 +83,21 @@ export function MapView({
       onErrorRef.current?.(`[error] ${message}`)
     })
 
-    // MapLibre の 'error' イベントが発火しないケースの切り分け用に、
-    // レンダリングが落ち着いた（idle）タイミングでソース/レイヤー/描画済み
-    // フィーチャの件数を報告する（診断用）
+    // 背景色だけが描画され、道路や地名などのデータレイヤーが出ない状態を
+    // 検知するための保険。描画が落ち着いた時点でフィーチャが1件も無ければ
+    // 診断情報を出す（正常に描画できている場合は何も表示しない）。
     map.on('idle', () => {
       try {
+        if (map.queryRenderedFeatures().length > 0) return
         const style = map.getStyle()
         const sourceCount = Object.keys(style?.sources ?? {}).length
         const layerCount = style?.layers?.length ?? 0
-        const featureCount = map.queryRenderedFeatures().length
         onErrorRef.current?.(
-          `[診断] sources=${sourceCount} layers=${layerCount} renderedFeatures=${featureCount}`,
+          `[診断] 地図データが描画されていません（sources=${sourceCount} layers=${layerCount}）`,
         )
       } catch (e) {
         onErrorRef.current?.(
-          `[診断] idle時の状態取得に失敗: ${e instanceof Error ? e.message : String(e)}`,
+          `[診断] 状態取得に失敗: ${e instanceof Error ? e.message : String(e)}`,
         )
       }
     })
