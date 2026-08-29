@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Cloudflare Workers の Static Assets 機能で配信する構成。
+  // バックエンド用の Worker スクリプトは持たず、`dist` を SPA として配信するだけの設定。
+  "name": "openfreemap-demo",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
