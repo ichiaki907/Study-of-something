@@ -17,6 +17,7 @@ import {
   localizeLabelsToJa,
   lowerPoiMinzoom,
   setPoiVisibility,
+  makeLabelFontsUpright,
 } from './labelStyle'
 import { collectPoiLayerIds, queryPoiAt } from './poiQuery'
 import { MAP_STYLES } from './mapStyles'
@@ -100,6 +101,7 @@ export function MapView({
     // 日本向けのラベル調整と POI の表示設定を適用しなおす
     map.on('style.load', () => {
       localizeLabelsToJa(map)
+      makeLabelFontsUpright(map)
       lowerPoiMinzoom(map)
       poiLayerIdsRef.current = collectPoiLayerIds(map)
       setPoiVisibility(map, showPoiRef.current)

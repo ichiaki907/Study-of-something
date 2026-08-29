@@ -84,3 +84,42 @@ export function lowerPoiMinzoom(map: MapLibreMap): void {
     map.setLayerZoomRange(layerId, minzoom, 24)
   }
 }
+
+/**
+ * 斜体（Italic）のラベルを立体（Regular）に直す。
+ *
+ * OpenFreeMap のスタイルは POI・水域名・その他ラベルに
+ * `Noto Sans Italic` を指定している。欧文の地図では水域名などを
+ * 斜体にするのが慣習だが、日本語の組版に斜体は使わないため、
+ * 全角文字が機械的に傾いて不自然な見た目になる。
+ *
+ * `Noto Sans Italic` → `Noto Sans Regular` のように Italic の部分だけを
+ * Regular へ置き換える。置き換え先はスタイル内の他レイヤーが既に
+ * 使っているフォントスタックなので、グリフサーバー側にも必ず存在する。
+ *
+ * ※ 関数名を use で始めると React が Hook と誤認するため避けている。
+ */
+export function makeLabelFontsUpright(map: MapLibreMap): void {
+  const layers = map.getStyle()?.layers
+  if (!layers) return
+
+  for (const layer of layers) {
+    if (layer.type !== 'symbol') continue
+
+    const font = layer.layout?.['text-font']
+    if (!Array.isArray(font)) continue
+
+    const hasItalic = font.some(
+      (name) => typeof name === 'string' && /italic/i.test(name),
+    )
+    if (!hasItalic) continue
+
+    map.setLayoutProperty(
+      layer.id,
+      'text-font',
+      font.map((name) =>
+        typeof name === 'string' ? name.replace(/Italic/gi, 'Regular') : name,
+      ),
+    )
+  }
+}
