@@ -5,8 +5,18 @@
  * Spot の形は API レスポンスとしてもそのまま使えるシンプルな形にしている。
  */
 
-/** 仮スポットのカテゴリ */
-export type SpotCategory = 'cafe' | 'restaurant' | 'sightseeing' | 'hotel'
+/**
+ * スポットのカテゴリ。
+ * cafe / restaurant / sightseeing / hotel は仮スポット用の基本カテゴリ。
+ * shop は背景地図(OSM)の POI を保存した際の受け皿として追加している
+ * （OSM の shop / clothing_store / grocery などをまとめる）。
+ */
+export type SpotCategory =
+  | 'cafe'
+  | 'restaurant'
+  | 'sightseeing'
+  | 'hotel'
+  | 'shop'
 
 /** 仮スポット（将来的には D1 等の実データに置き換える想定） */
 export interface Spot {
@@ -21,3 +31,19 @@ export interface Spot {
 
 /** OpenFreeMap の切り替え可能なスタイル */
 export type MapStyleKey = 'liberty' | 'positron' | 'bright'
+
+/**
+ * 背景地図（OpenFreeMap の poi レイヤー）から取得した施設。
+ * 保存スポット(Spot)とは出所が異なるため別の型にしている。
+ */
+export interface MapPoi {
+  /** OSM の feature id。無い場合は座標から合成する */
+  id: string
+  name: string
+  /** OpenMapTiles の poi.class（例: cafe, restaurant, shop, lodging） */
+  poiClass: string
+  /** OpenMapTiles の poi.subclass（例: convenience, supermarket） */
+  subclass?: string
+  latitude: number
+  longitude: number
+}

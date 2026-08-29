@@ -62,3 +62,25 @@ export function setPoiVisibility(map: MapLibreMap, visible: boolean): void {
     map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none')
   }
 }
+
+/**
+ * POI レイヤーの minzoom を下げて、初期表示の縮尺でも施設が見えるようにする。
+ *
+ * OpenFreeMap 既定では poi_r1=z15 / poi_r7=z16 / poi_r20=z17 から表示され、
+ * 初期表示の z14 ではバス停(poi_transit)しか出ない。
+ * 施設のカバレッジを確認しづらいので、重要度の高いものを1段階早く出す。
+ * （OpenMapTiles の poi データ自体が z14 以上にしか無いため、
+ *   これ以上下げても表示は増えない）
+ */
+export function lowerPoiMinzoom(map: MapLibreMap): void {
+  const adjustments: Record<string, number> = {
+    poi_r1: 14,
+    poi_r7: 15,
+    poi_r20: 16,
+  }
+  for (const [layerId, minzoom] of Object.entries(adjustments)) {
+    const layer = map.getLayer(layerId)
+    if (!layer) continue
+    map.setLayerZoomRange(layerId, minzoom, 24)
+  }
+}

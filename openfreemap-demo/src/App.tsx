@@ -2,18 +2,25 @@ import { useCallback, useMemo, useState } from 'react'
 import './App.css'
 import { CategoryFilter } from './components/CategoryFilter'
 import type { CategoryFilterValue } from './components/CategoryFilter'
+import { MapPoiCard } from './components/MapPoiCard'
 import { SpotDetailCard } from './components/SpotDetailCard'
 import { TopBar } from './components/TopBar'
 import { SPOTS } from './data/spots'
 import { MapView } from './map/MapView'
+import { categoryForPoiClass } from './map/poiQuery'
 import { DEFAULT_MAP_STYLE } from './map/mapStyles'
-import type { MapStyleKey, Spot } from './types'
+import type { MapPoi, MapStyleKey, Spot } from './types'
 
 function App() {
   const [styleKey, setStyleKey] = useState<MapStyleKey>(DEFAULT_MAP_STYLE)
   const [categoryFilter, setCategoryFilter] =
     useState<CategoryFilterValue>('all')
+  // 保存スポット。初期値は固定データで、地図上の施設から追加できる
+  // （将来的にはこの配列を D1 等のバックエンドに置き換える想定）
+  const [spots, setSpots] = useState<Spot[]>(SPOTS)
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
+  // 背景地図(OSM)の施設をタップしたときの選択状態
+  const [selectedMapPoi, setSelectedMapPoi] = useState<MapPoi | null>(null)
   // 背景地図の施設(POI)は既定で非表示（保存スポットのマーカーを埋もれさせないため）
   const [showPoi, setShowPoi] = useState(false)
   // 既定で Google マップ風のニュートラルな配色を適用する
@@ -29,10 +36,40 @@ function App() {
   const filteredSpots = useMemo(
     () =>
       categoryFilter === 'all'
-        ? SPOTS
-        : SPOTS.filter((spot) => spot.category === categoryFilter),
-    [categoryFilter],
+        ? spots
+        : spots.filter((spot) => spot.category === categoryFilter),
+    [categoryFilter, spots],
   )
+
+  // 地図上の施設を保存スポットへ追加する
+  const handleSaveMapPoi = useCallback((poi: MapPoi) => {
+    setSpots((prev) => {
+      if (prev.some((spot) => spot.id === poi.id)) return prev
+      return [
+        ...prev,
+        {
+          id: poi.id,
+          name: poi.name,
+          category: categoryForPoiClass(poi.poiClass),
+          latitude: poi.latitude,
+          longitude: poi.longitude,
+          description: '地図上の施設から追加したスポット。',
+        },
+      ]
+    })
+    setSelectedMapPoi(null)
+  }, [])
+
+  // 背景地図の施設を選んだら、保存スポットのカードは閉じる（同時表示を避ける）
+  const handleSelectMapPoi = useCallback((poi: MapPoi | null) => {
+    setSelectedMapPoi(poi)
+    if (poi) setSelectedSpot(null)
+  }, [])
+
+  const handleSelectSpot = useCallback((spot: Spot) => {
+    setSelectedSpot(spot)
+    setSelectedMapPoi(null)
+  }, [])
 
   return (
     <div className="app">
@@ -40,14 +77,15 @@ function App() {
         styleKey={styleKey}
         spots={filteredSpots}
         selectedSpotId={selectedSpot?.id ?? null}
-        onSelectSpot={setSelectedSpot}
+        onSelectSpot={handleSelectSpot}
+        onSelectMapPoi={handleSelectMapPoi}
         showPoi={showPoi}
         googleTheme={googleTheme}
         onError={handleMapError}
       />
 
       <TopBar
-        spotCount={SPOTS.length}
+        spotCount={spots.length}
         styleKey={styleKey}
         onChangeStyle={setStyleKey}
         showPoi={showPoi}
@@ -75,6 +113,14 @@ function App() {
           <SpotDetailCard
             spot={selectedSpot}
             onClose={() => setSelectedSpot(null)}
+          />
+        )}
+        {selectedMapPoi && (
+          <MapPoiCard
+            poi={selectedMapPoi}
+            saved={spots.some((spot) => spot.id === selectedMapPoi.id)}
+            onSave={handleSaveMapPoi}
+            onClose={() => setSelectedMapPoi(null)}
           />
         )}
         <CategoryFilter value={categoryFilter} onChange={setCategoryFilter} />

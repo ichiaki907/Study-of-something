@@ -13,9 +13,14 @@ import {
   restoreTheme,
   type PaintSnapshot,
 } from './googleTheme'
-import { localizeLabelsToJa, setPoiVisibility } from './labelStyle'
+import {
+  localizeLabelsToJa,
+  lowerPoiMinzoom,
+  setPoiVisibility,
+} from './labelStyle'
+import { collectPoiLayerIds, queryPoiAt } from './poiQuery'
 import { MAP_STYLES } from './mapStyles'
-import type { MapStyleKey, Spot } from '../types'
+import type { MapPoi, MapStyleKey, Spot } from '../types'
 
 /**
  * このデモにおける「地図まわりの処理」をすべて集約したコンポーネント。
@@ -39,6 +44,11 @@ interface MapViewProps {
   showPoi: boolean
   /** Google マップ風のニュートラルな配色を適用するか */
   googleTheme: boolean
+  /**
+   * 背景地図の施設をタップしたときの通知。
+   * 施設以外の場所をタップした場合は null が渡る。
+   */
+  onSelectMapPoi: (poi: MapPoi | null) => void
   /** スタイル・タイル読み込みなど地図まわりのエラーを呼び出し側へ通知する（診断用） */
   onError?: (message: string) => void
 }
@@ -50,6 +60,7 @@ export function MapView({
   onSelectSpot,
   showPoi,
   googleTheme,
+  onSelectMapPoi,
   onError,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -67,6 +78,10 @@ export function MapView({
   googleThemeRef.current = googleTheme
   // テーマ適用前の配色。トグルを戻したときに元へ復元するために保持する
   const themeSnapshotRef = useRef<PaintSnapshot | null>(null)
+  const onSelectMapPoiRef = useRef(onSelectMapPoi)
+  onSelectMapPoiRef.current = onSelectMapPoi
+  // 背景地図の POI レイヤーID（スタイルごとに異なるので読み込み時に集める）
+  const poiLayerIdsRef = useRef<string[]>([])
 
   // 地図の初期化（マウント時に一度だけ）
   useEffect(() => {
@@ -85,6 +100,8 @@ export function MapView({
     // 日本向けのラベル調整と POI の表示設定を適用しなおす
     map.on('style.load', () => {
       localizeLabelsToJa(map)
+      lowerPoiMinzoom(map)
+      poiLayerIdsRef.current = collectPoiLayerIds(map)
       setPoiVisibility(map, showPoiRef.current)
       // スタイルを切り替えると配色も元に戻るため、スナップショットを破棄して
       // 新しいスタイルに対して適用しなおす
@@ -92,6 +109,14 @@ export function MapView({
       if (googleThemeRef.current) {
         themeSnapshotRef.current = applyGoogleLikeTheme(map)
       }
+    })
+
+    // 背景地図の施設タップ。独自マーカーは DOM 要素なのでこのハンドラには来ない。
+    // 非表示レイヤーは queryRenderedFeatures の対象外になるため、
+    // 「施設表示」OFF のときは自然と何もヒットしない。
+    map.on('click', (e) => {
+      const poi = queryPoiAt(map, e.point, poiLayerIdsRef.current)
+      onSelectMapPoiRef.current(poi)
     })
 
     map.addControl(new NavigationControl(), 'top-right')
