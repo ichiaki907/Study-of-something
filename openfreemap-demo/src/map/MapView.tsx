@@ -8,6 +8,11 @@ import {
 // .map-container 等のレイアウト上書きが確実に効くようにしている
 import { useEffect, useRef } from 'react'
 import { CATEGORY_STYLE } from './categoryStyle'
+import {
+  applyGoogleLikeTheme,
+  restoreTheme,
+  type PaintSnapshot,
+} from './googleTheme'
 import { localizeLabelsToJa, setPoiVisibility } from './labelStyle'
 import { MAP_STYLES } from './mapStyles'
 import type { MapStyleKey, Spot } from '../types'
@@ -30,8 +35,10 @@ interface MapViewProps {
   spots: Spot[]
   selectedSpotId: string | null
   onSelectSpot: (spot: Spot) => void
-  /** 背景地図の POI（バス停・店舗など）を表示するか */
+  /** 背景地図の POI（施設・バス停など）を表示するか */
   showPoi: boolean
+  /** Google マップ風のニュートラルな配色を適用するか */
+  googleTheme: boolean
   /** スタイル・タイル読み込みなど地図まわりのエラーを呼び出し側へ通知する（診断用） */
   onError?: (message: string) => void
 }
@@ -42,6 +49,7 @@ export function MapView({
   selectedSpotId,
   onSelectSpot,
   showPoi,
+  googleTheme,
   onError,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -55,6 +63,10 @@ export function MapView({
   onErrorRef.current = onError
   const showPoiRef = useRef(showPoi)
   showPoiRef.current = showPoi
+  const googleThemeRef = useRef(googleTheme)
+  googleThemeRef.current = googleTheme
+  // テーマ適用前の配色。トグルを戻したときに元へ復元するために保持する
+  const themeSnapshotRef = useRef<PaintSnapshot | null>(null)
 
   // 地図の初期化（マウント時に一度だけ）
   useEffect(() => {
@@ -74,6 +86,12 @@ export function MapView({
     map.on('style.load', () => {
       localizeLabelsToJa(map)
       setPoiVisibility(map, showPoiRef.current)
+      // スタイルを切り替えると配色も元に戻るため、スナップショットを破棄して
+      // 新しいスタイルに対して適用しなおす
+      themeSnapshotRef.current = null
+      if (googleThemeRef.current) {
+        themeSnapshotRef.current = applyGoogleLikeTheme(map)
+      }
     })
 
     map.addControl(new NavigationControl(), 'top-right')
@@ -153,6 +171,21 @@ export function MapView({
     if (!map?.isStyleLoaded()) return
     setPoiVisibility(map, showPoi)
   }, [showPoi])
+
+  // Google 風カラーテーマのトグル（スタイル読み込み済みなら即座に反映）
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map?.isStyleLoaded()) return
+
+    if (googleTheme) {
+      if (!themeSnapshotRef.current) {
+        themeSnapshotRef.current = applyGoogleLikeTheme(map)
+      }
+    } else if (themeSnapshotRef.current) {
+      restoreTheme(map, themeSnapshotRef.current)
+      themeSnapshotRef.current = null
+    }
+  }, [googleTheme])
 
   // 表示中スポット（フィルター適用後）に合わせてマーカーを同期する
   useEffect(() => {

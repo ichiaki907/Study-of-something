@@ -14,8 +14,10 @@ function App() {
   const [categoryFilter, setCategoryFilter] =
     useState<CategoryFilterValue>('all')
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
-  // 背景地図の POI は既定で非表示（保存スポットのマーカーを埋もれさせないため）
+  // 背景地図の施設(POI)は既定で非表示（保存スポットのマーカーを埋もれさせないため）
   const [showPoi, setShowPoi] = useState(false)
+  // 既定で Google マップ風のニュートラルな配色を適用する
+  const [googleTheme, setGoogleTheme] = useState(true)
   // 地図の読み込みエラーを画面上で確認できるようにする（診断用のバナー表示）
   const [mapErrors, setMapErrors] = useState<string[]>([])
   const handleMapError = useCallback((message: string) => {
@@ -40,6 +42,7 @@ function App() {
         selectedSpotId={selectedSpot?.id ?? null}
         onSelectSpot={setSelectedSpot}
         showPoi={showPoi}
+        googleTheme={googleTheme}
         onError={handleMapError}
       />
 
@@ -49,6 +52,8 @@ function App() {
         onChangeStyle={setStyleKey}
         showPoi={showPoi}
         onTogglePoi={setShowPoi}
+        googleTheme={googleTheme}
+        onToggleGoogleTheme={setGoogleTheme}
       />
 
       {mapErrors.length > 0 && (

@@ -16,7 +16,7 @@
 /* --- 地図コントロール（現在地取得ボタン等）の位置調整 ---
    TopBar と重ならないよう、少し下にオフセットする */
 .maplibregl-ctrl-top-right {
-  top: calc(env(safe-area-inset-top, 0px) + 96px);
+  top: calc(env(safe-area-inset-top, 0px) + 132px);
 }
 
 /* --- 上部バー --- */
@@ -52,20 +52,25 @@
   color: #666;
 }
 
-.poi-toggle {
-  margin-left: auto;
+.top-bar__toggles {
+  display: flex;
+  gap: 6px;
+}
+
+.map-toggle {
   border: 1px solid #ccc;
   background: #fff;
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-size: 11px;
   color: #444;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.poi-toggle.is-active {
-  background: #1f2937;
-  border-color: #1f2937;
+.map-toggle.is-active {
+  background: #1a73e8;
+  border-color: #1a73e8;
   color: #fff;
 }
 
@@ -96,7 +101,7 @@
   position: absolute;
   left: 12px;
   right: 12px;
-  top: calc(env(safe-area-inset-top, 0px) + 90px);
+  top: calc(env(safe-area-inset-top, 0px) + 126px);
   z-index: 20;
   background: #fff3f0;
   border: 1px solid #e0542b;
