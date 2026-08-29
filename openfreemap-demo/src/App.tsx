@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import './App.css'
 import { CategoryFilter } from './components/CategoryFilter'
 import type { CategoryFilterValue } from './components/CategoryFilter'
@@ -14,6 +14,13 @@ function App() {
   const [categoryFilter, setCategoryFilter] =
     useState<CategoryFilterValue>('all')
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
+  // 地図の読み込みエラーを画面上で確認できるようにする（診断用のバナー表示）
+  const [mapErrors, setMapErrors] = useState<string[]>([])
+  const handleMapError = useCallback((message: string) => {
+    setMapErrors((prev) =>
+      prev.includes(message) || prev.length >= 4 ? prev : [...prev, message],
+    )
+  }, [])
 
   const filteredSpots = useMemo(
     () =>
@@ -30,6 +37,7 @@ function App() {
         spots={filteredSpots}
         selectedSpotId={selectedSpot?.id ?? null}
         onSelectSpot={setSelectedSpot}
+        onError={handleMapError}
       />
 
       <TopBar
@@ -37,6 +45,20 @@ function App() {
         styleKey={styleKey}
         onChangeStyle={setStyleKey}
       />
+
+      {mapErrors.length > 0 && (
+        <div className="map-error-banner" role="alert">
+          <strong>地図の読み込みでエラーが発生しています:</strong>
+          <ul>
+            {mapErrors.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+          <button type="button" onClick={() => setMapErrors([])}>
+            閉じる
+          </button>
+        </div>
+      )}
 
       <div className="bottom-area">
         {selectedSpot && (

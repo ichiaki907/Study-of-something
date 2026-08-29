@@ -30,6 +30,8 @@ interface MapViewProps {
   spots: Spot[]
   selectedSpotId: string | null
   onSelectSpot: (spot: Spot) => void
+  /** スタイル・タイル読み込みなど地図まわりのエラーを呼び出し側へ通知する（診断用） */
+  onError?: (message: string) => void
 }
 
 export function MapView({
@@ -37,14 +39,17 @@ export function MapView({
   spots,
   selectedSpotId,
   onSelectSpot,
+  onError,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const markersRef = useRef(new Map<string, Marker>())
-  // 最新の onSelectSpot をマーカーのクリックハンドラから参照するための ref
+  // 最新の onSelectSpot / onError をイベントハンドラから参照するための ref
   // （マーカー自体はスポット一覧が変わった時だけ作り直すため、クロージャが古くならないようにする）
   const onSelectSpotRef = useRef(onSelectSpot)
   onSelectSpotRef.current = onSelectSpot
+  const onErrorRef = useRef(onError)
+  onErrorRef.current = onError
 
   // 地図の初期化（マウント時に一度だけ）
   useEffect(() => {
@@ -70,6 +75,13 @@ export function MapView({
     // 位置情報が拒否・取得失敗しても例外にせず、コンソールに残すだけにする
     geolocate.on('error', (event: GeolocateErrorEvent) => {
       console.warn('現在地を取得できませんでした:', event.message)
+    })
+
+    // スタイル/タイル取得失敗などを画面上で確認できるようにする（診断用）
+    map.on('error', (event) => {
+      const message = event.error?.message ?? '不明な地図エラー'
+      console.error('MapLibre error:', message)
+      onErrorRef.current?.(message)
     })
 
     const markers = markersRef.current
