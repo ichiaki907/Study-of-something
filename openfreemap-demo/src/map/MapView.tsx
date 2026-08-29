@@ -8,6 +8,7 @@ import {
 // .map-container 等のレイアウト上書きが確実に効くようにしている
 import { useEffect, useRef } from 'react'
 import { CATEGORY_STYLE } from './categoryStyle'
+import { localizeLabelsToJa, setPoiVisibility } from './labelStyle'
 import { MAP_STYLES } from './mapStyles'
 import type { MapStyleKey, Spot } from '../types'
 
@@ -29,6 +30,8 @@ interface MapViewProps {
   spots: Spot[]
   selectedSpotId: string | null
   onSelectSpot: (spot: Spot) => void
+  /** 背景地図の POI（バス停・店舗など）を表示するか */
+  showPoi: boolean
   /** スタイル・タイル読み込みなど地図まわりのエラーを呼び出し側へ通知する（診断用） */
   onError?: (message: string) => void
 }
@@ -38,6 +41,7 @@ export function MapView({
   spots,
   selectedSpotId,
   onSelectSpot,
+  showPoi,
   onError,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -49,6 +53,8 @@ export function MapView({
   onSelectSpotRef.current = onSelectSpot
   const onErrorRef = useRef(onError)
   onErrorRef.current = onError
+  const showPoiRef = useRef(showPoi)
+  showPoiRef.current = showPoi
 
   // 地図の初期化（マウント時に一度だけ）
   useEffect(() => {
@@ -62,6 +68,13 @@ export function MapView({
       attributionControl: { compact: true },
     })
     mapRef.current = map
+
+    // スタイル読み込み完了時（初回・スタイル切り替え後の両方）に
+    // 日本向けのラベル調整と POI の表示設定を適用しなおす
+    map.on('style.load', () => {
+      localizeLabelsToJa(map)
+      setPoiVisibility(map, showPoiRef.current)
+    })
 
     map.addControl(new NavigationControl(), 'top-right')
 
@@ -133,6 +146,13 @@ export function MapView({
   useEffect(() => {
     mapRef.current?.setStyle(MAP_STYLES[styleKey].url)
   }, [styleKey])
+
+  // POI 表示トグル（スタイル読み込み済みなら即座に反映）
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map?.isStyleLoaded()) return
+    setPoiVisibility(map, showPoi)
+  }, [showPoi])
 
   // 表示中スポット（フィルター適用後）に合わせてマーカーを同期する
   useEffect(() => {

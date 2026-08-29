@@ -52,6 +52,23 @@
   color: #666;
 }
 
+.poi-toggle {
+  margin-left: auto;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #444;
+  cursor: pointer;
+}
+
+.poi-toggle.is-active {
+  background: #1f2937;
+  border-color: #1f2937;
+  color: #fff;
+}
+
 .style-switcher {
   display: flex;
   gap: 6px;

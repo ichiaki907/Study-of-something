@@ -14,6 +14,8 @@ function App() {
   const [categoryFilter, setCategoryFilter] =
     useState<CategoryFilterValue>('all')
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
+  // 背景地図の POI は既定で非表示（保存スポットのマーカーを埋もれさせないため）
+  const [showPoi, setShowPoi] = useState(false)
   // 地図の読み込みエラーを画面上で確認できるようにする（診断用のバナー表示）
   const [mapErrors, setMapErrors] = useState<string[]>([])
   const handleMapError = useCallback((message: string) => {
@@ -37,6 +39,7 @@ function App() {
         spots={filteredSpots}
         selectedSpotId={selectedSpot?.id ?? null}
         onSelectSpot={setSelectedSpot}
+        showPoi={showPoi}
         onError={handleMapError}
       />
 
@@ -44,6 +47,8 @@ function App() {
         spotCount={SPOTS.length}
         styleKey={styleKey}
         onChangeStyle={setStyleKey}
+        showPoi={showPoi}
+        onTogglePoi={setShowPoi}
       />
 
       {mapErrors.length > 0 && (
