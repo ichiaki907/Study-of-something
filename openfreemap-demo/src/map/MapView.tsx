@@ -81,11 +81,46 @@ export function MapView({
     map.on('error', (event) => {
       const message = event.error?.message ?? '不明な地図エラー'
       console.error('MapLibre error:', message)
-      onErrorRef.current?.(message)
+      onErrorRef.current?.(`[error] ${message}`)
     })
+
+    // MapLibre の 'error' イベントが発火しないケースの切り分け用に、
+    // レンダリングが落ち着いた（idle）タイミングでソース/レイヤー/描画済み
+    // フィーチャの件数を報告する（診断用）
+    map.on('idle', () => {
+      try {
+        const style = map.getStyle()
+        const sourceCount = Object.keys(style?.sources ?? {}).length
+        const layerCount = style?.layers?.length ?? 0
+        const featureCount = map.queryRenderedFeatures().length
+        onErrorRef.current?.(
+          `[診断] sources=${sourceCount} layers=${layerCount} renderedFeatures=${featureCount}`,
+        )
+      } catch (e) {
+        onErrorRef.current?.(
+          `[診断] idle時の状態取得に失敗: ${e instanceof Error ? e.message : String(e)}`,
+        )
+      }
+    })
+
+    // MapLibre 自身のエラーイベント経由で拾えない例外（Web Worker生成失敗など）
+    // を捕捉するための保険（診断用）
+    const handleWindowError = (event: ErrorEvent) => {
+      onErrorRef.current?.(`[window.onerror] ${event.message}`)
+    }
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason
+      const message =
+        reason instanceof Error ? reason.message : String(reason)
+      onErrorRef.current?.(`[unhandledrejection] ${message}`)
+    }
+    window.addEventListener('error', handleWindowError)
+    window.addEventListener('unhandledrejection', handleRejection)
 
     const markers = markersRef.current
     return () => {
+      window.removeEventListener('error', handleWindowError)
+      window.removeEventListener('unhandledrejection', handleRejection)
       markers.forEach((marker) => marker.remove())
       markers.clear()
       map.remove()

@@ -18,7 +18,7 @@ function App() {
   const [mapErrors, setMapErrors] = useState<string[]>([])
   const handleMapError = useCallback((message: string) => {
     setMapErrors((prev) =>
-      prev.includes(message) || prev.length >= 4 ? prev : [...prev, message],
+      prev.includes(message) || prev.length >= 8 ? prev : [...prev, message],
     )
   }, [])
 
@@ -48,7 +48,7 @@ function App() {
 
       {mapErrors.length > 0 && (
         <div className="map-error-banner" role="alert">
-          <strong>地図の読み込みでエラーが発生しています:</strong>
+          <strong>地図の読み込み状況（診断用）:</strong>
           <ul>
             {mapErrors.map((message) => (
               <li key={message}>{message}</li>
