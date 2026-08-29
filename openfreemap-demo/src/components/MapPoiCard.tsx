@@ -1,3 +1,7 @@
+import {
+  googleMapsDirectionsUrl,
+  googleMapsUrlByName,
+} from '../lib/googleMapsLink'
 import { CATEGORY_STYLE } from '../map/categoryStyle'
 import { categoryForPoiClass } from '../map/poiQuery'
 import type { MapPoi } from '../types'
@@ -42,21 +46,39 @@ export function MapPoiCard({ poi, saved, onSave, onClose }: MapPoiCardProps) {
         </span>
       </div>
 
-      {saved ? (
-        <p className="spot-card__saved">保存済みです</p>
-      ) : (
-        <button
-          type="button"
-          className="spot-card__detail-button"
-          onClick={() => onSave(poi)}
+      <div className="spot-card__actions">
+        {saved ? (
+          <span className="spot-card__saved">保存済みです</span>
+        ) : (
+          <button
+            type="button"
+            className="spot-card__detail-button"
+            onClick={() => onSave(poi)}
+          >
+            保存スポットに追加
+          </button>
+        )}
+        <a
+          className="spot-card__sub-button"
+          href={googleMapsUrlByName(poi.name)}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          保存スポットに追加
-        </button>
-      )}
+          Googleマップで詳細
+        </a>
+        <a
+          className="spot-card__sub-button"
+          href={googleMapsDirectionsUrl(poi.latitude, poi.longitude)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          経路案内
+        </a>
+      </div>
 
       <p className="spot-card__notice">
         ※ OSM から取得できるのは名前・種別・位置のみです。営業時間・電話番号・
-        評価などは含まれません。
+        評価などは「Googleマップで詳細」から確認する構成にしています。
       </p>
     </div>
   )

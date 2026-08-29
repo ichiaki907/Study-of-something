@@ -1,5 +1,9 @@
-import { useState } from 'react'
 import { CATEGORY_STYLE } from '../map/categoryStyle'
+import {
+  googleMapsDirectionsUrl,
+  googleMapsUrlByCoords,
+  googleMapsUrlByName,
+} from '../lib/googleMapsLink'
 import type { Spot } from '../types'
 
 interface SpotDetailCardProps {
@@ -9,11 +13,22 @@ interface SpotDetailCardProps {
 
 /**
  * マーカータップ時に表示するスポット詳細カード。
- * 「詳細を見る」は今回は仮ボタンで、実際のページ遷移は行わない。
+ *
+ * 「詳細」は Google マップへの遷移で代替している。
+ * Maps URLs は API キー不要のただの URL なので、
+ * 「地図は OpenFreeMap、詳細情報は Google マップ」という
+ * ハイブリッド構成が成立するかの確認を兼ねている。
  */
 export function SpotDetailCard({ spot, onClose }: SpotDetailCardProps) {
-  const [showNotice, setShowNotice] = useState(false)
   const style = CATEGORY_STYLE[spot.category]
+
+  // 地図上の施設から追加したスポットは実在するので名前で検索したほうが
+  // 店舗ページに辿り着ける。架空の仮スポットは名前で検索しても
+  // 見つからないため、座標で開く。
+  const isFromMap = spot.id.startsWith('osm-') || spot.id.startsWith('pos-')
+  const placeUrl = isFromMap
+    ? googleMapsUrlByName(spot.name)
+    : googleMapsUrlByCoords(spot.latitude, spot.longitude)
 
   return (
     <div className="spot-card" role="dialog" aria-label={spot.name}>
@@ -32,16 +47,29 @@ export function SpotDetailCard({ spot, onClose }: SpotDetailCardProps) {
       {spot.description && (
         <p className="spot-card__description">{spot.description}</p>
       )}
-      <button
-        type="button"
-        className="spot-card__detail-button"
-        onClick={() => setShowNotice(true)}
-      >
-        詳細を見る
-      </button>
-      {showNotice && (
+
+      <div className="spot-card__actions">
+        <a
+          className="spot-card__detail-button"
+          href={placeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Googleマップで開く
+        </a>
+        <a
+          className="spot-card__sub-button"
+          href={googleMapsDirectionsUrl(spot.latitude, spot.longitude)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          経路案内
+        </a>
+      </div>
+
+      {!isFromMap && (
         <p className="spot-card__notice">
-          ※ このデモでは詳細ページへの遷移は実装していません。
+          ※ この仮スポットは架空のため、Googleマップでは座標の位置が開きます。
         </p>
       )}
     </div>
