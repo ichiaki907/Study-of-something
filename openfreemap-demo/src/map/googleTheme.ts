@@ -27,9 +27,9 @@ const PALETTE = {
    */
   urban: '#f3f3f3',
   /** 自然（森林・公園・草地）。黄緑ではなく明るいミント寄りの緑 */
-  green: '#d9f4e1',
+  green: '#c3e7cd',
   /** 農地。森林よりわずかに淡く */
-  farmland: '#e4f6e8',
+  farmland: '#d5eedb',
   water: '#a0d6ea',
   building: '#e8e6e7',
   buildingTop: '#eeecee',
@@ -68,7 +68,7 @@ const PALETTE = {
  * 山地がほとんど白いままになる。一般的な地図アプリの「山の緑」に
  * 近づけるため濃くする。
  */
-const WOOD_OPACITY = 0.85
+const WOOD_OPACITY = 0.9
 
 /**
  * 緑地（草地・公園）の最低不透明度。
