@@ -44,14 +44,14 @@ const PALETTE = {
    * 逆にすると（白い道路＋グレーの街区）道路だけが浮いて
    * 見慣れた地図と印象が変わってしまう。
    */
-  road: '#ecf0f4',
-  roadCasing: '#e0e5ec',
+  road: '#e4e9f0',
+  roadCasing: '#d3dae3',
   /** 国道(trunk/primary)。階層が上がるほど濃い青灰にする */
-  trunk: '#d2d9e3',
-  trunkCasing: '#bcc5d1',
-  /** 県道(secondary/tertiary)。実測値 #e3e6ed に合わせる */
-  arterial: '#e3e6ed',
-  arterialCasing: '#ccd3dc',
+  trunk: '#c9d2de',
+  trunkCasing: '#b2bcca',
+  /** 県道(secondary/tertiary)。生活道路と国道の中間 */
+  arterial: '#d9e0e9',
+  arterialCasing: '#c2cad6',
   /** 高速道路のみ橙系を残す */
   motorway: '#f9d79f',
   motorwayCasing: '#efb96a',
