@@ -19,6 +19,15 @@
   top: calc(env(safe-area-inset-top, 0px) + 132px);
 }
 
+/* 帰属表示（OpenStreetMap 等）が下部UIに隠れないよう持ち上げる。
+   OpenStreetMap のデータは ODbL ライセンスで帰属表示が必須のため、
+   カテゴリフィルターの行に覆われたままにしてはいけない。 */
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 58px);
+  z-index: 11;
+}
+
 /* --- 上部バー --- */
 .top-bar {
   position: absolute;

@@ -222,6 +222,40 @@ Google マップアプリが直接開く。
 OSM に無い情報を Places API の課金なしで補える点が、本デモで確認できた
 実用的な落としどころ。
 
+## ライセンスと費用について
+
+この構成は**すべて無料で商用利用できる**が、帰属表示（クレジット）が必須。
+
+| 構成要素 | ライセンス / 費用 |
+| --- | --- |
+| OpenFreeMap（タイル配信） | 無料・無制限・APIキー不要（寄付で運営） |
+| 地図データ（OpenStreetMap） | **ODbL** — 帰属表示が必須 |
+| MapLibre GL JS | BSD-3-Clause |
+| React / React DOM / Vite | MIT |
+| TypeScript | Apache-2.0 |
+| Google Maps URLs（詳細への遷移） | 無料・APIキー不要（Places API とは別物） |
+| Cloudflare Workers | 無料枠あり |
+
+OpenFreeMap 公式の記載:
+> Using our public instance is completely free: there are no limits on the
+> number of map views or requests. There's no registration, no user database,
+> no API keys, and no cookies.
+
+### 帰属表示について（重要）
+
+OpenStreetMap のデータは ODbL なので、**「© OpenStreetMap contributors」の
+表示が法的に必須**。MapLibre の AttributionControl が TileJSON から自動で
+出してくれるが、**このアプリでは下部のカテゴリフィルター行に隠れていた**ため、
+`.maplibregl-ctrl-bottom-right` を持ち上げて見えるようにしている
+（`src/App.css`）。UI を作り変える際は隠さないよう注意すること。
+
+### 本番運用でのリスク
+
+OpenFreeMap は CDN を使わず専用サーバー2台＋Round-Robin DNS で、寄付により
+運営されている。無料・無制限だが **SLA は無い**。キャンペーンのように
+アクセスが集中する商用利用では、PMTiles を自前配信（Cloudflare R2 等）へ
+切り替えられるようにしておくのが安全。
+
 ## 仮スポットデータについて
 
 `src/data/spots.ts` に、大阪駅・梅田周辺を想定した架空のスポットを
