@@ -16,29 +16,32 @@ import type { MapLibreMap } from 'maplibre-gl'
  */
 
 const PALETTE = {
-  /** 陸地のベース。市街地・緑地を乗せる下地なので明るく保つ */
-  land: '#f5f5f3',
+  /** 陸地のベース。市街地(白)と緑地(緑)の下地になる中間色 */
+  land: '#f2f1eb',
   /** 土地利用のうち市街地以外（墓地・学校敷地など） */
-  landSubtle: '#ebebe7',
+  landSubtle: '#eae8e1',
   /**
    * 市街地（residential / commercial / industrial）。
-   * ベースより一段濃くして「街と郊外」の対比を出す。
-   * ここが背景と同色だと、引いたときに街の輪郭が消えて
-   * 全体がのっぺりした印象になる。
+   *
+   * ベースより「明るく」する点が重要。一般的な地図アプリは
+   * 白=市街地 / 緑=自然 / 青=水 の三色対比で見やすさを出しており、
+   * 市街地を濃いグレーにすると中間色で画面が埋まって、
+   * かえって緑と水が沈みメリハリが失われる。
    */
-  urban: '#e8e7e2',
-  green: '#c2e3b6',
-  water: '#9fcbef',
+  urban: '#fdfcf9',
+  /** 自然（森林・公園・草地）。市街地の白に対してはっきり出す */
+  green: '#b7dfa6',
+  water: '#93c5ee',
   building: '#e3e3df',
   buildingTop: '#eaeae6',
   road: '#ffffff',
-  roadCasing: '#d9d9d5',
+  roadCasing: '#cfcfc9',
   motorway: '#f9d79f',
   motorwayCasing: '#efb96a',
   rail: '#d6d6d3',
   path: '#dcdcd8',
   /** 農地。森林よりわずかに明るく黄み寄りにして区別できるようにする */
-  farmland: '#d8e9c2',
+  farmland: '#d2e7b8',
 }
 
 /**
@@ -48,7 +51,7 @@ const PALETTE = {
  * 山地がほとんど白いままになる。一般的な地図アプリの「山の緑」に
  * 近づけるため濃くする。
  */
-const WOOD_OPACITY = 0.7
+const WOOD_OPACITY = 0.85
 
 /**
  * 緑地（草地・公園）の最低不透明度。
@@ -57,13 +60,18 @@ const WOOD_OPACITY = 0.7
  * liberty の grass は 0.3 まで下がって色が飛んでしまう。
  * 既定値がこれより高い場合は下げないよう、数値指定のときだけ比較する。
  */
-const GREEN_MIN_OPACITY = 0.6
+const GREEN_MIN_OPACITY = 0.75
 
 /** 追加する農地レイヤーの ID（復元時に削除するため固定値で持つ） */
 const FARMLAND_LAYER_ID = 'ofm-demo-farmland'
 
 /** 建物にうっすら輪郭を付けて、施設の輪郭が分かるようにする */
 const BUILDING_OUTLINE = '#d8d8d4'
+
+/** POI・道路名ラベルの文字色（既定の #666 は薄すぎる） */
+const LABEL_TEXT = '#43464a'
+/** ラベルの白フチ。道路や緑地に重なっても読めるようにする */
+const LABEL_HALO = '#ffffff'
 
 interface ColorRule {
   test: RegExp
@@ -206,6 +214,31 @@ function emphasizeLandcover(map: MapLibreMap, snapshot: ThemeSnapshot): void {
 }
 
 /**
+ * ラベルの視認性を上げる。
+ *
+ * OpenFreeMap 既定では POI と道路名の文字色が #666 と薄く、
+ * さらに道路名は text-halo-color が未指定で白フチが付かないため、
+ * 道路の上に重なると読みにくい。文字を濃くし、白フチを付ける。
+ * 町名・都市名は元から #333 / #000 なので触らない。
+ */
+function strengthenLabelContrast(
+  map: MapLibreMap,
+  snapshot: ThemeSnapshot,
+): void {
+  const layers = map.getStyle()?.layers
+  if (!layers) return
+
+  for (const layer of layers) {
+    if (layer.type !== 'symbol') continue
+    if (!/^poi|highway[-_]name/.test(layer.id)) continue
+
+    setPaint(map, layer.id, 'text-color', LABEL_TEXT, snapshot)
+    setPaint(map, layer.id, 'text-halo-color', LABEL_HALO, snapshot)
+    setPaint(map, layer.id, 'text-halo-width', 1.2, snapshot)
+  }
+}
+
+/**
  * Google マップ風の配色を適用し、元の状態を復元するための
  * スナップショットを返す。
  */
@@ -231,6 +264,9 @@ export function applyGoogleLikeTheme(map: MapLibreMap): ThemeSnapshot {
 
   // 山地の緑（森林・農地）を強調する
   emphasizeLandcover(map, snapshot)
+
+  // POI・道路名ラベルの視認性を上げる
+  strengthenLabelContrast(map, snapshot)
 
   return snapshot
 }
