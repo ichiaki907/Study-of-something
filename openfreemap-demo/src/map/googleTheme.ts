@@ -1,4 +1,5 @@
 import type { MapLibreMap } from 'maplibre-gl'
+import type { ColorThemeKey } from '../types'
 
 /**
  * OpenFreeMap の既定配色を「一般的な地図アプリ（Google マップ等）」に
@@ -14,6 +15,24 @@ import type { MapLibreMap } from 'maplibre-gl'
  * - 黄色〜橙は高速道路にのみ残す
  * - 病院のピンク・学校の紫など主張の強い面: ニュートラル化
  */
+
+/** 画面に出す配色テーマの一覧。パターンを増やす場合はここに足す */
+export const COLOR_THEMES: Record<
+  ColorThemeKey,
+  { label: string; note: string }
+> = {
+  default: {
+    label: 'デフォルト',
+    note: 'OpenFreeMap 本来の配色（スタイルをそのまま表示）',
+  },
+  google: {
+    label: 'Google風',
+    note: '一般的な地図アプリに寄せた配色',
+  },
+}
+
+/** 起動時に適用する配色テーマ */
+export const DEFAULT_COLOR_THEME: ColorThemeKey = 'google'
 
 const PALETTE = {
   // --- 面 ---

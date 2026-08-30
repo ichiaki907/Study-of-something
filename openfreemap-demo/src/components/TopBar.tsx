@@ -1,5 +1,6 @@
 import { StyleSwitcher } from './StyleSwitcher'
-import type { MapStyleKey } from '../types'
+import { ThemeSwitcher } from './ThemeSwitcher'
+import type { ColorThemeKey, MapStyleKey } from '../types'
 
 interface TopBarProps {
   spotCount: number
@@ -7,14 +8,14 @@ interface TopBarProps {
   onChangeStyle: (style: MapStyleKey) => void
   showPoi: boolean
   onTogglePoi: (showPoi: boolean) => void
-  googleTheme: boolean
-  onToggleGoogleTheme: (googleTheme: boolean) => void
+  colorTheme: ColorThemeKey
+  onChangeColorTheme: (theme: ColorThemeKey) => void
 }
 
 /**
  * 画面上部の簡易アプリ UI。
  * 保存スポット件数・地図スタイル切り替えに加え、
- * 検証用のトグル（配色・施設表示）を並べている。
+ * 検証用のUI（配色テーマ・施設表示）を並べている。
  */
 export function TopBar({
   spotCount,
@@ -22,8 +23,8 @@ export function TopBar({
   onChangeStyle,
   showPoi,
   onTogglePoi,
-  googleTheme,
-  onToggleGoogleTheme,
+  colorTheme,
+  onChangeColorTheme,
 }: TopBarProps) {
   return (
     <header className="top-bar">
@@ -35,15 +36,7 @@ export function TopBar({
       <StyleSwitcher value={styleKey} onChange={onChangeStyle} />
 
       <div className="top-bar__toggles">
-        <button
-          type="button"
-          className={`map-toggle${googleTheme ? ' is-active' : ''}`}
-          aria-pressed={googleTheme}
-          onClick={() => onToggleGoogleTheme(!googleTheme)}
-          title="一般的な地図アプリに近いニュートラルな配色に切り替えます"
-        >
-          Google風カラー
-        </button>
+        <ThemeSwitcher value={colorTheme} onChange={onChangeColorTheme} />
         <button
           type="button"
           className={`map-toggle${showPoi ? ' is-active' : ''}`}

@@ -7,8 +7,9 @@ import { SpotDetailCard } from './components/SpotDetailCard'
 import { TopBar } from './components/TopBar'
 import { SPOTS } from './data/spots'
 import { MapView } from './map/MapView'
+import { DEFAULT_COLOR_THEME } from './map/googleTheme'
 import { DEFAULT_MAP_STYLE } from './map/mapStyles'
-import type { MapPoi, MapStyleKey, Spot } from './types'
+import type { ColorThemeKey, MapPoi, MapStyleKey, Spot } from './types'
 
 function App() {
   const [styleKey, setStyleKey] = useState<MapStyleKey>(DEFAULT_MAP_STYLE)
@@ -19,8 +20,9 @@ function App() {
   const [selectedMapPoi, setSelectedMapPoi] = useState<MapPoi | null>(null)
   // 背景地図の施設(POI)は既定で非表示（保存スポットのマーカーを埋もれさせないため）
   const [showPoi, setShowPoi] = useState(false)
-  // 既定で Google マップ風のニュートラルな配色を適用する
-  const [googleTheme, setGoogleTheme] = useState(true)
+  // 配色テーマ（起動時は Google風）
+  const [colorTheme, setColorTheme] =
+    useState<ColorThemeKey>(DEFAULT_COLOR_THEME)
   // 地図の読み込みエラーを画面上で確認できるようにする（診断用のバナー表示）
   const [mapErrors, setMapErrors] = useState<string[]>([])
   const handleMapError = useCallback((message: string) => {
@@ -57,7 +59,7 @@ function App() {
         onSelectSpot={handleSelectSpot}
         onSelectMapPoi={handleSelectMapPoi}
         showPoi={showPoi}
-        googleTheme={googleTheme}
+        colorTheme={colorTheme}
         onError={handleMapError}
       />
 
@@ -67,8 +69,8 @@ function App() {
         onChangeStyle={setStyleKey}
         showPoi={showPoi}
         onTogglePoi={setShowPoi}
-        googleTheme={googleTheme}
-        onToggleGoogleTheme={setGoogleTheme}
+        colorTheme={colorTheme}
+        onChangeColorTheme={setColorTheme}
       />
 
       {mapErrors.length > 0 && (

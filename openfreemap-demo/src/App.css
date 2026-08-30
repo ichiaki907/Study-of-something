@@ -54,7 +54,14 @@
 
 .top-bar__toggles {
   display: flex;
+  align-items: center;
   gap: 6px;
+}
+
+/* 配色テーマは2択なので、隣接させて1つの選択群に見せる */
+.theme-switcher {
+  display: flex;
+  gap: 4px;
 }
 
 .map-toggle {

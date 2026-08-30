@@ -21,7 +21,7 @@ import {
 } from './labelStyle'
 import { collectPoiLayerIds, queryPoiAt } from './poiQuery'
 import { MAP_STYLES } from './mapStyles'
-import type { MapPoi, MapStyleKey, Spot } from '../types'
+import type { ColorThemeKey, MapPoi, MapStyleKey, Spot } from '../types'
 
 /**
  * このデモにおける「地図まわりの処理」をすべて集約したコンポーネント。
@@ -43,8 +43,8 @@ interface MapViewProps {
   onSelectSpot: (spot: Spot) => void
   /** 背景地図の POI（施設・バス停など）を表示するか */
   showPoi: boolean
-  /** Google マップ風のニュートラルな配色を適用するか */
-  googleTheme: boolean
+  /** 適用する配色テーマ */
+  colorTheme: ColorThemeKey
   /**
    * 背景地図の施設をタップしたときの通知。
    * 施設以外の場所をタップした場合は null が渡る。
@@ -60,7 +60,7 @@ export function MapView({
   selectedSpotId,
   onSelectSpot,
   showPoi,
-  googleTheme,
+  colorTheme,
   onSelectMapPoi,
   onError,
 }: MapViewProps) {
@@ -75,8 +75,8 @@ export function MapView({
   onErrorRef.current = onError
   const showPoiRef = useRef(showPoi)
   showPoiRef.current = showPoi
-  const googleThemeRef = useRef(googleTheme)
-  googleThemeRef.current = googleTheme
+  const colorThemeRef = useRef(colorTheme)
+  colorThemeRef.current = colorTheme
   // テーマ適用前の配色。トグルを戻したときに元へ復元するために保持する
   const themeSnapshotRef = useRef<ThemeSnapshot | null>(null)
   const onSelectMapPoiRef = useRef(onSelectMapPoi)
@@ -108,7 +108,7 @@ export function MapView({
       // スタイルを切り替えると配色も元に戻るため、スナップショットを破棄して
       // 新しいスタイルに対して適用しなおす
       themeSnapshotRef.current = null
-      if (googleThemeRef.current) {
+      if (colorThemeRef.current === 'google') {
         themeSnapshotRef.current = applyGoogleLikeTheme(map)
       }
     })
@@ -199,20 +199,21 @@ export function MapView({
     setPoiVisibility(map, showPoi)
   }, [showPoi])
 
-  // Google 風カラーテーマのトグル（スタイル読み込み済みなら即座に反映）
+  // 配色テーマの切り替え（スタイル読み込み済みなら即座に反映）
   useEffect(() => {
     const map = mapRef.current
     if (!map?.isStyleLoaded()) return
 
-    if (googleTheme) {
+    if (colorTheme === 'google') {
       if (!themeSnapshotRef.current) {
         themeSnapshotRef.current = applyGoogleLikeTheme(map)
       }
     } else if (themeSnapshotRef.current) {
+      // デフォルトに戻す＝退避しておいたスタイル本来の配色へ復元する
       restoreTheme(map, themeSnapshotRef.current)
       themeSnapshotRef.current = null
     }
-  }, [googleTheme])
+  }, [colorTheme])
 
   // 表示中スポット（フィルター適用後）に合わせてマーカーを同期する
   useEffect(() => {

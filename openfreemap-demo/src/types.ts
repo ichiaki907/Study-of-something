@@ -23,6 +23,14 @@ export interface Spot {
 export type MapStyleKey = 'liberty' | 'positron' | 'bright'
 
 /**
+ * 配色テーマ。
+ * default はスタイル本来の配色（何も上書きしない）、
+ * google は一般的な地図アプリに寄せた配色。
+ * パターンを増やす場合はここにキーを足す。
+ */
+export type ColorThemeKey = 'default' | 'google'
+
+/**
  * 背景地図（OpenFreeMap の poi レイヤー）から取得した施設。
  * 保存スポット(Spot)とは出所が異なるため別の型にしている。
  */
