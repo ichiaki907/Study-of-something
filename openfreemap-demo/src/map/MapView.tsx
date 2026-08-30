@@ -21,6 +21,7 @@ import {
   setPoiVisibility,
 } from './labelStyle'
 import { collectPoiLayerIds, queryPoiAt } from './poiQuery'
+import { applyJapaneseRoadShields } from './roadShields'
 import { MAP_STYLES } from './mapStyles'
 import type { ColorThemeKey, MapPoi, MapStyleKey, Spot } from '../types'
 
@@ -105,6 +106,7 @@ export function MapView({
       // 複製したバス用レイヤーには text-field を残さないため、
       // 後続のラベル処理の対象からも自然に外れる。
       separateBusStops(map)
+      applyJapaneseRoadShields(map)
       localizeLabelsToJa(map)
       makeLabelFontsUpright(map)
       lowerPoiMinzoom(map)
