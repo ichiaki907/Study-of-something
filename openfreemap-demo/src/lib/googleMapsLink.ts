@@ -25,17 +25,6 @@ function toCoordQuery(latitude: number, longitude: number): string {
 }
 
 /**
- * 施設名で Google マップを検索して開く URL。
- *
- * 実在する施設（OSM から取得した施設など）はこちらを使うと、
- * 営業時間・口コミ・写真などが載った店舗ページに辿り着ける。
- * 同名店舗が複数ある場合は意図した店舗にならないことがある点に注意。
- */
-export function googleMapsUrlByName(name: string): string {
-  return `${SEARCH_BASE}&query=${encodeURIComponent(name)}`
-}
-
-/**
  * 緯度経度で Google マップを開く URL。
  *
  * 位置は必ず正確になるが、その地点に Google 側の登録が無い場合は
@@ -47,6 +36,27 @@ export function googleMapsUrlByCoords(
   longitude: number,
 ): string {
   return `${SEARCH_BASE}&query=${toCoordQuery(latitude, longitude)}`
+}
+
+/**
+ * 施設名と座標を組み合わせて Google マップを開く URL。
+ *
+ * 名前だけで検索すると、ユニクロ・スターバックスのようなチェーン店は
+ * 別の支店が開いてしまう。検索語に座標を添えることで検索範囲がその地点に
+ * 寄り、タップした店舗が選ばれやすくなる。
+ *
+ * ※ Maps URLs の仕様に「検索範囲を指定するパラメータ」は無く、
+ *   query に座標を含めて検索を寄せる形になる。そのため必ず目的の店舗が
+ *   選ばれると保証されているわけではない。位置だけを確実に開きたい場合は
+ *   googleMapsUrlByCoords を使う。
+ */
+export function googleMapsUrlByNameNear(
+  name: string,
+  latitude: number,
+  longitude: number,
+): string {
+  const query = `${encodeURIComponent(name)}%20${toCoordQuery(latitude, longitude)}`
+  return `${SEARCH_BASE}&query=${query}`
 }
 
 /** 指定地点への経路案内を Google マップで開く URL */

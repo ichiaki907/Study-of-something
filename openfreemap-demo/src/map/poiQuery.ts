@@ -1,5 +1,5 @@
 import type { MapGeoJSONFeature, MapLibreMap, PointLike } from 'maplibre-gl'
-import type { MapPoi, SpotCategory } from '../types'
+import type { MapPoi } from '../types'
 
 /**
  * 背景地図（OpenFreeMap の poi レイヤー）にある施設をタップで拾うための処理。
@@ -17,48 +17,73 @@ import type { MapPoi, SpotCategory } from '../types'
  * poi_r1 / poi_r7 / poi_r20 / poi_transit、positron は POI 自体を持たない）
  * ため実行時に集める。
  *
- * poi_transit（バス停・駅・空港）は保存スポットの対象として不自然なうえ
- * 数が多くタップの邪魔になるので、タップ対象からは除外する
- * （表示自体は「施設表示」トグルに従う）。
+ * 駅を選択できるようにするため poi_transit（駅・バス停・空港）も含める。
  */
 export function collectPoiLayerIds(map: MapLibreMap): string[] {
   const layers = map.getStyle()?.layers
   if (!layers) return []
-  return layers
-    .filter((layer) => /^poi/i.test(layer.id) && layer.id !== 'poi_transit')
-    .map((layer) => layer.id)
+  return layers.filter((layer) => /^poi/i.test(layer.id)).map((l) => l.id)
 }
+
+/** 施設カードに表示する分類（保存スポットのカテゴリとは独立） */
+export interface PoiDisplay {
+  label: string
+  color: string
+  icon: string
+}
+
+const TRANSIT: PoiDisplay = { label: '交通', color: '#1a73e8', icon: '🚉' }
+const CAFE: PoiDisplay = { label: 'カフェ', color: '#b5651d', icon: '☕' }
+const FOOD: PoiDisplay = { label: '飲食店', color: '#e0542b', icon: '🍴' }
+const SHOP: PoiDisplay = { label: '店舗', color: '#7a3fb5', icon: '🛍️' }
+const LODGING: PoiDisplay = { label: '宿泊', color: '#2b6fe0', icon: '🛏️' }
+const SIGHTS: PoiDisplay = { label: '観光・文化', color: '#2f8f4e', icon: '⛩️' }
+const PUBLIC: PoiDisplay = { label: '公共・その他', color: '#5f6368', icon: '📍' }
 
 /**
- * OpenMapTiles の poi.class をこのアプリのカテゴリへ対応付ける。
+ * OpenMapTiles の poi.class を表示用の分類へ対応付ける。
  *
  * class は「該当する上位クラスが無い場合 subclass と同じ値になる」仕様のため、
- * restaurant / museum のように一覧に無いものも class として現れる。
- *
- * OpenMapTiles の class は37種あり、このアプリの5カテゴリには収まらない
- * （office / town_hall / school / hospital など）。対応表に無いものは
- * まとめて shop（表示名は「店舗・施設」）として扱い、
- * 元の class / subclass はカード上にそのまま表示して判別できるようにする。
+ * restaurant / museum / pharmacy のように class 一覧に無い値も現れる。
+ * 対応表に無いものは「公共・その他」として扱い、
+ * 元の class / subclass はカード上に併記して判別できるようにしている。
  */
-const CLASS_TO_CATEGORY: Record<string, SpotCategory> = {
-  cafe: 'cafe',
-  ice_cream: 'cafe',
-  restaurant: 'restaurant',
-  fast_food: 'restaurant',
-  bar: 'restaurant',
-  beer: 'restaurant',
-  lodging: 'hotel',
-  attraction: 'sightseeing',
-  art_gallery: 'sightseeing',
-  castle: 'sightseeing',
-  zoo: 'sightseeing',
-  stadium: 'sightseeing',
-  park: 'sightseeing',
-  museum: 'sightseeing',
+const CLASS_TO_DISPLAY: Record<string, PoiDisplay> = {
+  // 交通（駅・バス停・空港など）
+  railway: TRANSIT,
+  bus: TRANSIT,
+  aerialway: TRANSIT,
+  entrance: TRANSIT,
+  airport: TRANSIT,
+  // 飲食
+  cafe: CAFE,
+  ice_cream: CAFE,
+  restaurant: FOOD,
+  fast_food: FOOD,
+  bar: FOOD,
+  beer: FOOD,
+  // 物販
+  shop: SHOP,
+  clothing_store: SHOP,
+  grocery: SHOP,
+  alcohol_shop: SHOP,
+  music: SHOP,
+  car: SHOP,
+  // 宿泊
+  lodging: LODGING,
+  // 観光・文化
+  attraction: SIGHTS,
+  art_gallery: SIGHTS,
+  castle: SIGHTS,
+  zoo: SIGHTS,
+  stadium: SIGHTS,
+  park: SIGHTS,
+  museum: SIGHTS,
+  library: SIGHTS,
 }
 
-export function categoryForPoiClass(poiClass: string): SpotCategory {
-  return CLASS_TO_CATEGORY[poiClass] ?? 'shop'
+export function poiDisplayFor(poiClass: string): PoiDisplay {
+  return CLASS_TO_DISPLAY[poiClass] ?? PUBLIC
 }
 
 /** タップ位置の許容範囲（px）。指でも押しやすいように少し広げる */

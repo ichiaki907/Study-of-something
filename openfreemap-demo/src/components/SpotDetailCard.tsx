@@ -2,7 +2,6 @@ import { CATEGORY_STYLE } from '../map/categoryStyle'
 import {
   googleMapsDirectionsUrl,
   googleMapsUrlByCoords,
-  googleMapsUrlByName,
 } from '../lib/googleMapsLink'
 import type { Spot } from '../types'
 
@@ -21,14 +20,6 @@ interface SpotDetailCardProps {
  */
 export function SpotDetailCard({ spot, onClose }: SpotDetailCardProps) {
   const style = CATEGORY_STYLE[spot.category]
-
-  // 地図上の施設から追加したスポットは実在するので名前で検索したほうが
-  // 店舗ページに辿り着ける。架空の仮スポットは名前で検索しても
-  // 見つからないため、座標で開く。
-  const isFromMap = spot.id.startsWith('osm-') || spot.id.startsWith('pos-')
-  const placeUrl = isFromMap
-    ? googleMapsUrlByName(spot.name)
-    : googleMapsUrlByCoords(spot.latitude, spot.longitude)
 
   return (
     <div className="spot-card" role="dialog" aria-label={spot.name}>
@@ -51,7 +42,7 @@ export function SpotDetailCard({ spot, onClose }: SpotDetailCardProps) {
       <div className="spot-card__actions">
         <a
           className="spot-card__detail-button"
-          href={placeUrl}
+          href={googleMapsUrlByCoords(spot.latitude, spot.longitude)}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -67,11 +58,9 @@ export function SpotDetailCard({ spot, onClose }: SpotDetailCardProps) {
         </a>
       </div>
 
-      {!isFromMap && (
-        <p className="spot-card__notice">
-          ※ この仮スポットは架空のため、Googleマップでは座標の位置が開きます。
-        </p>
-      )}
+      <p className="spot-card__notice">
+        ※ この仮スポットは架空のため、Googleマップでは座標の位置が開きます。
+      </p>
     </div>
   )
 }

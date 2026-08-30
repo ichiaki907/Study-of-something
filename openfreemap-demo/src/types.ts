@@ -5,18 +5,8 @@
  * Spot の形は API レスポンスとしてもそのまま使えるシンプルな形にしている。
  */
 
-/**
- * スポットのカテゴリ。
- * cafe / restaurant / sightseeing / hotel は仮スポット用の基本カテゴリ。
- * shop は背景地図(OSM)の POI を保存した際の受け皿として追加している
- * （OSM の shop / clothing_store / grocery などをまとめる）。
- */
-export type SpotCategory =
-  | 'cafe'
-  | 'restaurant'
-  | 'sightseeing'
-  | 'hotel'
-  | 'shop'
+/** 仮スポットのカテゴリ */
+export type SpotCategory = 'cafe' | 'restaurant' | 'sightseeing' | 'hotel'
 
 /** 仮スポット（将来的には D1 等の実データに置き換える想定） */
 export interface Spot {

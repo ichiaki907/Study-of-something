@@ -9,9 +9,6 @@ export const CATEGORY_STYLE: Record<
   restaurant: { label: '飲食店', color: '#e0542b', icon: '🍴' },
   sightseeing: { label: '観光', color: '#2f8f4e', icon: '⛩️' },
   hotel: { label: 'ホテル', color: '#2b6fe0', icon: '🛏️' },
-  // OpenMapTiles の class は37種あり5カテゴリに収まらないため、
-  // shop は「店舗・施設」として受け皿を兼ねている
-  shop: { label: '店舗・施設', color: '#7a3fb5', icon: '🏬' },
 }
 
 export const CATEGORY_ORDER: SpotCategory[] = [
@@ -19,5 +16,4 @@ export const CATEGORY_ORDER: SpotCategory[] = [
   'restaurant',
   'sightseeing',
   'hotel',
-  'shop',
 ]

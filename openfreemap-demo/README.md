@@ -125,6 +125,60 @@ npm run cf:dev
 `maplibregl.Map` の `style` に渡しているだけで、自前のタイルサーバーや
 PMTiles は使用していません。
 
+## 地図上の施設（OSM POI）について
+
+OpenFreeMap のタイルは OpenMapTiles スキーマなので、`poi` レイヤーに
+OpenStreetMap 由来の施設が入っている。「施設表示」トグルをONにすると
+背景地図に施設が表示され、**タップすると詳細カードが出る**。
+駅・バス停も選択できる（Google Maps / Places API は使用していない）。
+
+取得できるフィールドは以下のみ。
+
+- `name`（日本語名）／`class`／`subclass`／`rank`／`level`／`indoor`
+
+**営業時間・電話番号・評価・レビュー・写真・混雑状況は含まれない。**
+この範囲を超える情報が必要なら Google Places API 等の別データソースが要る、
+というのが本デモで確認したかった線引きである。
+
+表示ズームについて、OpenFreeMap 既定では `poi_r1`=z15 / `poi_r7`=z16 /
+`poi_r20`=z17 からしか出ず、初期表示の z14 ではバス停しか見えない。
+カバレッジを確認しやすいよう `src/map/labelStyle.ts` の
+`lowerPoiMinzoom()` で1段階ずつ早めている（poi データ自体が z14 以上に
+しか無いため、これ以上は下げても増えない）。
+
+施設カードの分類は保存スポットのカテゴリとは独立に持たせている
+（`poiDisplayFor()`）。OpenMapTiles の `class` は37種あり仮スポットの
+4カテゴリには収まらないため、交通／カフェ／飲食店／店舗／宿泊／
+観光・文化／公共・その他 に振り分け、元の `class` / `subclass` は
+カード上に併記して判別できるようにしている。
+
+## Google マップへの遷移について
+
+詳細カードから Google マップへ遷移できるようにしている
+（`src/lib/googleMapsLink.ts`）。使っているのは Google の
+「Maps URLs」という**単なる URL スキーム**で、Google Maps API /
+Places API とは別物。**API キーも課金も不要**で、スマートフォンでは
+Google マップアプリが直接開く。
+
+| 用途 | URL |
+| --- | --- |
+| 場所検索 | `https://www.google.com/maps/search/?api=1&query=<検索語>` |
+| 経路案内 | `https://www.google.com/maps/dir/?api=1&destination=<lat,lng>` |
+
+緯度経度のカンマは URL エンコードしない（`%2C` にすると Google マップ側で
+正しく解釈されないことがある）。
+
+チェーン店（ユニクロ等）は名前だけで検索すると別の支店が開いてしまうため、
+検索語に座標を添えて検索をその地点へ寄せている（`googleMapsUrlByNameNear`）。
+ただし Maps URLs に検索範囲を指定するパラメータは無いため、
+必ず目的の店舗が選ばれる保証はない。位置だけを確実に開きたい場合は
+座標のみで検索する（`googleMapsUrlByCoords`）。
+
+これにより「**地図表示は OpenFreeMap（無料）／営業時間・口コミ・写真などの
+詳細は Google マップへ委ねる**」というハイブリッド構成が取れる。
+OSM に無い情報を Places API の課金なしで補える点が、本デモで確認できた
+実用的な落としどころ。
+
 ## 仮スポットデータについて
 
 `src/data/spots.ts` に、大阪駅・梅田周辺を想定した架空のスポットを
