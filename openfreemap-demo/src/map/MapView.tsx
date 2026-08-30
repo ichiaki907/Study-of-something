@@ -11,7 +11,7 @@ import { CATEGORY_STYLE } from './categoryStyle'
 import {
   applyGoogleLikeTheme,
   restoreTheme,
-  type PaintSnapshot,
+  type ThemeSnapshot,
 } from './googleTheme'
 import {
   localizeLabelsToJa,
@@ -78,7 +78,7 @@ export function MapView({
   const googleThemeRef = useRef(googleTheme)
   googleThemeRef.current = googleTheme
   // テーマ適用前の配色。トグルを戻したときに元へ復元するために保持する
-  const themeSnapshotRef = useRef<PaintSnapshot | null>(null)
+  const themeSnapshotRef = useRef<ThemeSnapshot | null>(null)
   const onSelectMapPoiRef = useRef(onSelectMapPoi)
   onSelectMapPoiRef.current = onSelectMapPoi
   // 背景地図の POI レイヤーID（スタイルごとに異なるので読み込み時に集める）

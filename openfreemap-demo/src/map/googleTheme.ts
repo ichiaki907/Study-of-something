@@ -28,7 +28,21 @@ const PALETTE = {
   motorwayCasing: '#efb96a',
   rail: '#d6d6d3',
   path: '#dcdcd8',
+  /** 農地。森林よりわずかに明るく黄み寄りにして区別できるようにする */
+  farmland: '#dfeccd',
 }
+
+/**
+ * 森林(landcover class=wood)の不透明度。
+ *
+ * OpenFreeMap 既定は bright=0.1 / liberty=0.4 と非常に薄く、
+ * 山地がほとんど白いままになる。一般的な地図アプリの「山の緑」に
+ * 近づけるため濃くする。
+ */
+const WOOD_OPACITY = 0.5
+
+/** 追加する農地レイヤーの ID（復元時に削除するため固定値で持つ） */
+const FARMLAND_LAYER_ID = 'ofm-demo-farmland'
 
 /** 建物にうっすら輪郭を付けて、施設の輪郭が分かるようにする */
 const BUILDING_OUTLINE = '#d8d8d4'
@@ -82,15 +96,86 @@ function colorPropertyFor(layerType: string): string | null {
   }
 }
 
-/** テーマ適用前の色を退避しておくためのスナップショット */
-export type PaintSnapshot = Map<string, { property: string; value: unknown }>
+/** テーマ適用前の状態を退避しておくためのスナップショット */
+export interface ThemeSnapshot {
+  /** 変更した paint プロパティの元の値 */
+  paints: Map<string, { property: string; value: unknown }>
+  /** テーマ適用時に追加したレイヤーの ID */
+  addedLayerIds: string[]
+}
+
+/** 元の値を退避してから paint プロパティを設定する */
+function setPaint(
+  map: MapLibreMap,
+  layerId: string,
+  property: string,
+  value: unknown,
+  snapshot: ThemeSnapshot,
+  snapshotKey = `${layerId}::${property}`,
+): void {
+  snapshot.paints.set(snapshotKey, {
+    property,
+    value: map.getPaintProperty(layerId, property),
+  })
+  map.setPaintProperty(layerId, property, value)
+}
 
 /**
- * Google マップ風の配色を適用し、元の配色を復元するための
+ * 山地の緑を、一般的な地図アプリに近い見え方へ強調する。
+ *
+ * OpenFreeMap には森林・農地のデータ（landcover レイヤーの
+ * class=wood / farmland）が入っているが、既定のスタイルでは
+ * - 森林の不透明度が非常に低い（bright=0.1 / liberty=0.4）
+ * - 農地を描くレイヤーがそもそも存在しない（3スタイルとも）
+ * ため、山間部がほとんど白いままになる。
+ * 森林を濃くし、農地レイヤーを追加して「山の緑」を出す。
+ */
+function emphasizeLandcover(map: MapLibreMap, snapshot: ThemeSnapshot): void {
+  const layers = map.getStyle()?.layers
+  if (!layers) return
+
+  // 森林レイヤー（bright はハイフン、liberty/positron はアンダースコア）
+  const woodLayer = layers.find((l) => /^landcover[-_]wood$/.test(l.id))
+  if (woodLayer) {
+    setPaint(map, woodLayer.id, 'fill-opacity', WOOD_OPACITY, snapshot)
+  }
+
+  // 農地レイヤーを追加する。データ(class=farmland)は存在するのに
+  // どのスタイルも描画していないため、自前で足す。
+  if (!map.getLayer(FARMLAND_LAYER_ID) && map.getSource('openmaptiles')) {
+    // 道路やラベルより下に入れる。森林レイヤーの直前が最も自然。
+    const beforeId =
+      woodLayer?.id ??
+      layers.find((l) => /^water/.test(l.id))?.id ??
+      layers.find((l) => l.type === 'symbol')?.id
+
+    // 適切な挿入位置が見つからない場合は、道路の上に乗ってしまうので追加しない
+    if (beforeId) {
+      map.addLayer(
+        {
+          id: FARMLAND_LAYER_ID,
+          type: 'fill',
+          source: 'openmaptiles',
+          'source-layer': 'landcover',
+          filter: ['==', ['get', 'class'], 'farmland'],
+          paint: {
+            'fill-color': PALETTE.farmland,
+            'fill-opacity': 0.75,
+          },
+        },
+        beforeId,
+      )
+      snapshot.addedLayerIds.push(FARMLAND_LAYER_ID)
+    }
+  }
+}
+
+/**
+ * Google マップ風の配色を適用し、元の状態を復元するための
  * スナップショットを返す。
  */
-export function applyGoogleLikeTheme(map: MapLibreMap): PaintSnapshot {
-  const snapshot: PaintSnapshot = new Map()
+export function applyGoogleLikeTheme(map: MapLibreMap): ThemeSnapshot {
+  const snapshot: ThemeSnapshot = { paints: new Map(), addedLayerIds: [] }
   const layers = map.getStyle()?.layers
   if (!layers) return snapshot
 
@@ -101,30 +186,30 @@ export function applyGoogleLikeTheme(map: MapLibreMap): PaintSnapshot {
     const rule = RULES.find((r) => r.test.test(layer.id))
     if (!rule) continue
 
-    snapshot.set(layer.id, {
-      property,
-      value: map.getPaintProperty(layer.id, property),
-    })
-    map.setPaintProperty(layer.id, property, rule.color)
+    setPaint(map, layer.id, property, rule.color, snapshot)
 
     // 建物は塗りだけだと輪郭が潰れるので、うっすら枠線を足す
     if (layer.type === 'fill' && /^building/.test(layer.id)) {
-      const outlineKey = `${layer.id}::outline`
-      snapshot.set(outlineKey, {
-        property: 'fill-outline-color',
-        value: map.getPaintProperty(layer.id, 'fill-outline-color'),
-      })
-      map.setPaintProperty(layer.id, 'fill-outline-color', BUILDING_OUTLINE)
+      setPaint(map, layer.id, 'fill-outline-color', BUILDING_OUTLINE, snapshot)
     }
   }
+
+  // 山地の緑（森林・農地）を強調する
+  emphasizeLandcover(map, snapshot)
 
   return snapshot
 }
 
-/** applyGoogleLikeTheme で退避した元の配色へ戻す */
-export function restoreTheme(map: MapLibreMap, snapshot: PaintSnapshot): void {
-  for (const [key, { property, value }] of snapshot) {
-    const layerId = key.endsWith('::outline') ? key.slice(0, -9) : key
+/** applyGoogleLikeTheme で退避した元の状態へ戻す */
+export function restoreTheme(map: MapLibreMap, snapshot: ThemeSnapshot): void {
+  // 追加したレイヤーを取り除く
+  for (const layerId of snapshot.addedLayerIds) {
+    if (map.getLayer(layerId)) map.removeLayer(layerId)
+  }
+
+  // paint プロパティを元に戻す
+  for (const [key, { property, value }] of snapshot.paints) {
+    const layerId = key.slice(0, key.lastIndexOf('::'))
     if (!map.getLayer(layerId)) continue
     map.setPaintProperty(layerId, property, value)
   }
