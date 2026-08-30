@@ -123,3 +123,58 @@ export function makeLabelFontsUpright(map: MapLibreMap): void {
     )
   }
 }
+
+/** バス停専用レイヤーの ID。/^poi/ に一致させて施設表示トグル・タップ対象に含める */
+const BUS_LAYER_ID = 'poi-bus-highzoom'
+
+/**
+ * バス停をかなり拡大したときだけ出す最小ズーム。
+ * z17 は建物が見える程度の縮尺で、街を俯瞰しているときには出てこない。
+ */
+const BUS_MIN_ZOOM = 17
+
+/**
+ * バス停を駅・空港から分離し、名称を消してアイコンだけを高ズームで出す。
+ *
+ * OpenFreeMap の `poi_transit` は airport / bus / rail をまとめて描いており、
+ * バス停は数が多いため、縮尺を引いた状態では名称だけで画面が埋まってしまう。
+ * 一方で駅は残したいので、レイヤーを分けて扱う。
+ *
+ * - 元の `poi_transit` は airport / rail のみに絞る（駅はこれまで通り）
+ * - バス停は複製したレイヤーで描き、名称(text-field)を外し minzoom を上げる
+ *
+ * 見た目（アイコン画像・サイズ等）を元のレイヤーからそのまま引き継ぎたいので、
+ * 定義を手で書き写さず実行時に複製している。スタイルごとの差異にも追従できる。
+ */
+export function separateBusStops(map: MapLibreMap): void {
+  const layers = map.getStyle()?.layers
+  if (!layers) return
+
+  const transit = layers.find((layer) => layer.id === 'poi_transit')
+  if (!transit || transit.type !== 'symbol') return
+  // スタイル再読み込み以外で二重に追加されないようにする
+  if (map.getLayer(BUS_LAYER_ID)) return
+
+  // 元のレイヤーからバスを外す（駅・空港はこれまで通りの見え方を維持）
+  map.setFilter('poi_transit', [
+    'match',
+    ['get', 'class'],
+    ['airport', 'rail'],
+    true,
+    false,
+  ])
+
+  const busLayer = structuredClone(transit) as typeof transit & {
+    id: string
+    minzoom?: number
+    filter?: unknown
+    layout?: Record<string, unknown>
+  }
+  busLayer.id = BUS_LAYER_ID
+  busLayer.filter = ['==', ['get', 'class'], 'bus']
+  busLayer.minzoom = BUS_MIN_ZOOM
+  // 名称は表示しない（アイコンのみ）
+  if (busLayer.layout) delete busLayer.layout['text-field']
+
+  map.addLayer(busLayer, 'poi_transit')
+}

@@ -16,8 +16,9 @@ import {
 import {
   localizeLabelsToJa,
   lowerPoiMinzoom,
-  setPoiVisibility,
   makeLabelFontsUpright,
+  separateBusStops,
+  setPoiVisibility,
 } from './labelStyle'
 import { collectPoiLayerIds, queryPoiAt } from './poiQuery'
 import { MAP_STYLES } from './mapStyles'
@@ -100,6 +101,10 @@ export function MapView({
     // スタイル読み込み完了時（初回・スタイル切り替え後の両方）に
     // 日本向けのラベル調整と POI の表示設定を適用しなおす
     map.on('style.load', () => {
+      // バス停を分離するのはラベル調整より前。
+      // 複製したバス用レイヤーには text-field を残さないため、
+      // 後続のラベル処理の対象からも自然に外れる。
+      separateBusStops(map)
       localizeLabelsToJa(map)
       makeLabelFontsUpright(map)
       lowerPoiMinzoom(map)
