@@ -1,4 +1,4 @@
-import type { MapLibreMap } from 'maplibre-gl'
+import type { FilterSpecification, MapLibreMap } from 'maplibre-gl'
 
 /**
  * OpenFreeMap（OpenMapTiles スキーマ）の見た目を日本向けに調整するヘルパー。
@@ -155,15 +155,7 @@ export function separateBusStops(map: MapLibreMap): void {
   // スタイル再読み込み以外で二重に追加されないようにする
   if (map.getLayer(BUS_LAYER_ID)) return
 
-  // 元のレイヤーからバスを外す（駅・空港はこれまで通りの見え方を維持）
-  map.setFilter('poi_transit', [
-    'match',
-    ['get', 'class'],
-    ['airport', 'rail'],
-    true,
-    false,
-  ])
-
+  // バス停専用のレイヤーを複製して追加する（名称なし・高ズームのみ）
   const busLayer = structuredClone(transit) as typeof transit & {
     id: string
     minzoom?: number
@@ -175,6 +167,24 @@ export function separateBusStops(map: MapLibreMap): void {
   busLayer.minzoom = BUS_MIN_ZOOM
   // 名称は表示しない（アイコンのみ）
   if (busLayer.layout) delete busLayer.layout['text-field']
-
   map.addLayer(busLayer, 'poi_transit')
+
+  // 既存のすべての POI レイヤーからバスを除外する。
+  //
+  // poi_transit だけを対象にしても消えない点に注意。
+  // poi_r1 / poi_r7 / poi_r20 は rank でしか絞っておらず class 指定が無いため、
+  // バス停はこれらのレイヤーにも含まれて名称付きで描画される。
+  for (const layer of layers) {
+    if (!/^poi/i.test(layer.id)) continue
+    if (layer.id === BUS_LAYER_ID) continue
+
+    const current = map.getFilter(layer.id)
+    const excludeBus = ['!=', ['get', 'class'], 'bus']
+    // getFilter が返す型はレガシー形式と式形式の広い union になっており、
+    // 'all' で合成すると型を絞り込めないためキャストしている
+    const next = (
+      current ? ['all', current, excludeBus] : excludeBus
+    ) as FilterSpecification
+    map.setFilter(layer.id, next)
+  }
 }
