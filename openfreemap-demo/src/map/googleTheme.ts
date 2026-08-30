@@ -16,20 +16,29 @@ import type { MapLibreMap } from 'maplibre-gl'
  */
 
 const PALETTE = {
+  /** 陸地のベース。市街地・緑地を乗せる下地なので明るく保つ */
   land: '#f5f5f3',
-  landSubtle: '#eeeeec',
-  green: '#c9e7c0',
-  water: '#a9d3f0',
-  building: '#e6e6e3',
-  buildingTop: '#ededea',
+  /** 土地利用のうち市街地以外（墓地・学校敷地など） */
+  landSubtle: '#ebebe7',
+  /**
+   * 市街地（residential / commercial / industrial）。
+   * ベースより一段濃くして「街と郊外」の対比を出す。
+   * ここが背景と同色だと、引いたときに街の輪郭が消えて
+   * 全体がのっぺりした印象になる。
+   */
+  urban: '#e8e7e2',
+  green: '#c2e3b6',
+  water: '#9fcbef',
+  building: '#e3e3df',
+  buildingTop: '#eaeae6',
   road: '#ffffff',
-  roadCasing: '#e2e2df',
+  roadCasing: '#d9d9d5',
   motorway: '#f9d79f',
   motorwayCasing: '#efb96a',
   rail: '#d6d6d3',
   path: '#dcdcd8',
   /** 農地。森林よりわずかに明るく黄み寄りにして区別できるようにする */
-  farmland: '#dfeccd',
+  farmland: '#d8e9c2',
 }
 
 /**
@@ -39,7 +48,16 @@ const PALETTE = {
  * 山地がほとんど白いままになる。一般的な地図アプリの「山の緑」に
  * 近づけるため濃くする。
  */
-const WOOD_OPACITY = 0.5
+const WOOD_OPACITY = 0.7
+
+/**
+ * 緑地（草地・公園）の最低不透明度。
+ *
+ * これらも既定値が低く、bright の park は z12 で 0.2、
+ * liberty の grass は 0.3 まで下がって色が飛んでしまう。
+ * 既定値がこれより高い場合は下げないよう、数値指定のときだけ比較する。
+ */
+const GREEN_MIN_OPACITY = 0.6
 
 /** 追加する農地レイヤーの ID（復元時に削除するため固定値で持つ） */
 const FARMLAND_LAYER_ID = 'ofm-demo-farmland'
@@ -75,6 +93,11 @@ const RULES: ColorRule[] = [
   {
     test: /highway|street|bridge[-_]|tunnel[-_]|road[-_]|aeroway/,
     color: PALETTE.road,
+  },
+  // 市街地は汎用の landuse ルールより前に評価する
+  {
+    test: /landuse[-_](residential|suburb|commercial|industrial|retail)/,
+    color: PALETTE.urban,
   },
   { test: /landuse|landcover/, color: PALETTE.landSubtle },
   { test: /^background$/, color: PALETTE.land },
@@ -140,6 +163,18 @@ function emphasizeLandcover(map: MapLibreMap, snapshot: ThemeSnapshot): void {
     setPaint(map, woodLayer.id, 'fill-opacity', WOOD_OPACITY, snapshot)
   }
 
+  // 草地・公園も既定の不透明度が低く色が飛ぶため底上げする。
+  // ズームで変化する式が入っている場合は数値比較できないので、
+  // 数値で指定されていて十分濃いときだけそのまま残す。
+  for (const layer of layers) {
+    if (!/^park$|^landcover[-_]grass/.test(layer.id)) continue
+
+    const current = map.getPaintProperty(layer.id, 'fill-opacity')
+    if (typeof current === 'number' && current >= GREEN_MIN_OPACITY) continue
+
+    setPaint(map, layer.id, 'fill-opacity', GREEN_MIN_OPACITY, snapshot)
+  }
+
   // 農地レイヤーを追加する。データ(class=farmland)は存在するのに
   // どのスタイルも描画していないため、自前で足す。
   if (!map.getLayer(FARMLAND_LAYER_ID) && map.getSource('openmaptiles')) {
@@ -160,7 +195,7 @@ function emphasizeLandcover(map: MapLibreMap, snapshot: ThemeSnapshot): void {
           filter: ['==', ['get', 'class'], 'farmland'],
           paint: {
             'fill-color': PALETTE.farmland,
-            'fill-opacity': 0.75,
+            'fill-opacity': 0.85,
           },
         },
         beforeId,
