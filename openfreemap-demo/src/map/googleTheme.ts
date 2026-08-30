@@ -16,32 +16,41 @@ import type { MapLibreMap } from 'maplibre-gl'
  */
 
 const PALETTE = {
-  /** 陸地のベース。市街地(白)と緑地(緑)の下地になる中間色 */
-  land: '#f2f1eb',
+  // --- 面 ---
+  /** 陸地のベース */
+  land: '#f3f1f2',
   /** 土地利用のうち市街地以外（墓地・学校敷地など） */
-  landSubtle: '#eae8e1',
+  landSubtle: '#efedee',
   /**
-   * 市街地（residential / commercial / industrial）。
-   *
-   * ベースより「明るく」する点が重要。一般的な地図アプリは
-   * 白=市街地 / 緑=自然 / 青=水 の三色対比で見やすさを出しており、
-   * 市街地を濃いグレーにすると中間色で画面が埋まって、
-   * かえって緑と水が沈みメリハリが失われる。
+   * 市街地。実測では Google も街区をベースとほぼ同色にしており、
+   * 面ではなく「道路の塗り分け」で街の構造を見せている。
    */
-  urban: '#fdfcf9',
-  /** 自然（森林・公園・草地）。市街地の白に対してはっきり出す */
-  green: '#b7dfa6',
-  water: '#93c5ee',
-  building: '#e3e3df',
-  buildingTop: '#eaeae6',
+  urban: '#f0eeef',
+  /** 自然（森林・公園・草地）。黄緑ではなく明るいミント寄りの緑 */
+  green: '#d9f4e1',
+  /** 農地。森林よりわずかに淡く */
+  farmland: '#e4f6e8',
+  water: '#a0d6ea',
+  building: '#e8e6e7',
+  buildingTop: '#eeecee',
+
+  // --- 道路（3階層で塗り分ける）---
+  /** 生活道路。周囲の土地より「明るく」して道路網を浮かせる */
   road: '#ffffff',
-  roadCasing: '#cfcfc9',
+  roadCasing: '#e2e0e1',
+  /** 国道(trunk/primary)。土地より「暗い」青灰で幹線を目立たせる */
+  trunk: '#c3ccd8',
+  trunkCasing: '#aab4c2',
+  /** 県道(secondary/tertiary)。国道より淡い青灰 */
+  arterial: '#d5dde5',
+  arterialCasing: '#bcc5cf',
+  /** 高速道路のみ橙系を残す */
   motorway: '#f9d79f',
   motorwayCasing: '#efb96a',
+
+  // --- その他 ---
   rail: '#d6d6d3',
   path: '#dcdcd8',
-  /** 農地。森林よりわずかに明るく黄み寄りにして区別できるようにする */
-  farmland: '#d2e7b8',
 }
 
 /**
@@ -92,10 +101,17 @@ const RULES: ColorRule[] = [
   { test: /park|grass|wood|forest/, color: PALETTE.green },
   { test: /^building[-_]top$/, color: PALETTE.buildingTop },
   { test: /^building/, color: PALETTE.building },
-  { test: /(motorway|trunk).*casing/, color: PALETTE.motorwayCasing },
+  // 高速道路
+  { test: /motorway.*casing/, color: PALETTE.motorwayCasing },
   { test: /motorway/, color: PALETTE.motorway },
+  // 国道（trunk / primary）
+  { test: /(trunk|primary).*casing/, color: PALETTE.trunkCasing },
+  { test: /(trunk|primary)/, color: PALETTE.trunk },
+  // 県道（secondary / tertiary）
+  { test: /(secondary|tertiary).*casing/, color: PALETTE.arterialCasing },
+  { test: /(secondary|tertiary)/, color: PALETTE.arterial },
+  // 生活道路のケーシング
   { test: /casing/, color: PALETTE.roadCasing },
-  // rail(way) / major_rail / transit_rail をまとめて拾う
   { test: /rail|cablecar/, color: PALETTE.rail },
   { test: /path/, color: PALETTE.path },
   {
