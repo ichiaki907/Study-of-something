@@ -24,11 +24,12 @@ export type MapStyleKey = 'liberty' | 'positron' | 'bright'
 
 /**
  * 配色テーマ。
- * default はスタイル本来の配色（何も上書きしない）、
- * google は一般的な地図アプリに寄せた配色。
+ * default  … スタイル本来の配色（何も上書きしない）
+ * google   … 一般的な地図アプリに寄せた配色
+ * contrast … 屋外でも判別しやすい高コントラストな配色
  * パターンを増やす場合はここにキーを足す。
  */
-export type ColorThemeKey = 'default' | 'google'
+export type ColorThemeKey = 'default' | 'google' | 'contrast'
 
 /**
  * 背景地図（OpenFreeMap の poi レイヤー）から取得した施設。

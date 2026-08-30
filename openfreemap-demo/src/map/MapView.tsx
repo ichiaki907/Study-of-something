@@ -9,10 +9,10 @@ import {
 import { useEffect, useRef } from 'react'
 import { CATEGORY_STYLE } from './categoryStyle'
 import {
-  applyGoogleLikeTheme,
+  applyColorTheme,
   restoreTheme,
   type ThemeSnapshot,
-} from './googleTheme'
+} from './colorThemes'
 import {
   localizeLabelsToJa,
   lowerPoiMinzoom,
@@ -108,9 +108,7 @@ export function MapView({
       // スタイルを切り替えると配色も元に戻るため、スナップショットを破棄して
       // 新しいスタイルに対して適用しなおす
       themeSnapshotRef.current = null
-      if (colorThemeRef.current === 'google') {
-        themeSnapshotRef.current = applyGoogleLikeTheme(map)
-      }
+      themeSnapshotRef.current = applyColorTheme(map, colorThemeRef.current)
     })
 
     // 背景地図の施設タップ。独自マーカーは DOM 要素なのでこのハンドラには来ない。
@@ -204,15 +202,13 @@ export function MapView({
     const map = mapRef.current
     if (!map?.isStyleLoaded()) return
 
-    if (colorTheme === 'google') {
-      if (!themeSnapshotRef.current) {
-        themeSnapshotRef.current = applyGoogleLikeTheme(map)
-      }
-    } else if (themeSnapshotRef.current) {
-      // デフォルトに戻す＝退避しておいたスタイル本来の配色へ復元する
+    // いったん元の配色へ戻してから、新しいテーマを適用しなおす。
+    // こうしておけばテーマ間を直接切り替えても前のテーマが残らない。
+    if (themeSnapshotRef.current) {
       restoreTheme(map, themeSnapshotRef.current)
       themeSnapshotRef.current = null
     }
+    themeSnapshotRef.current = applyColorTheme(map, colorTheme)
   }, [colorTheme])
 
   // 表示中スポット（フィルター適用後）に合わせてマーカーを同期する

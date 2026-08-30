@@ -1,4 +1,4 @@
-import { COLOR_THEMES } from '../map/googleTheme'
+import { COLOR_THEMES } from '../map/colorThemes'
 import type { ColorThemeKey } from '../types'
 
 interface ThemeSwitcherProps {

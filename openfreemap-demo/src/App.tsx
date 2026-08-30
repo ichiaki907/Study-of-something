@@ -7,7 +7,7 @@ import { SpotDetailCard } from './components/SpotDetailCard'
 import { TopBar } from './components/TopBar'
 import { SPOTS } from './data/spots'
 import { MapView } from './map/MapView'
-import { DEFAULT_COLOR_THEME } from './map/googleTheme'
+import { DEFAULT_COLOR_THEME } from './map/colorThemes'
 import { DEFAULT_MAP_STYLE } from './map/mapStyles'
 import type { ColorThemeKey, MapPoi, MapStyleKey, Spot } from './types'
 

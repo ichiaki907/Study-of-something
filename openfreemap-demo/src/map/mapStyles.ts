@@ -45,4 +45,4 @@ export const MAP_STYLES: Record<
   },
 }
 
-export const DEFAULT_MAP_STYLE: MapStyleKey = 'liberty'
+export const DEFAULT_MAP_STYLE: MapStyleKey = 'bright'
