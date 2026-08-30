@@ -17,15 +17,15 @@ import type { MapLibreMap } from 'maplibre-gl'
 
 const PALETTE = {
   // --- 面 ---
-  /** 陸地のベース */
-  land: '#f3f1f2',
+  /** 陸地のベース。街区は明るく保ち、道路を暗くして網を見せる */
+  land: '#f5f5f5',
   /** 土地利用のうち市街地以外（墓地・学校敷地など） */
-  landSubtle: '#efedee',
+  landSubtle: '#f0f0f0',
   /**
    * 市街地。実測では Google も街区をベースとほぼ同色にしており、
    * 面ではなく「道路の塗り分け」で街の構造を見せている。
    */
-  urban: '#f0eeef',
+  urban: '#f3f3f3',
   /** 自然（森林・公園・草地）。黄緑ではなく明るいミント寄りの緑 */
   green: '#d9f4e1',
   /** 農地。森林よりわずかに淡く */
@@ -35,15 +35,23 @@ const PALETTE = {
   buildingTop: '#eeecee',
 
   // --- 道路（3階層で塗り分ける）---
-  /** 生活道路。周囲の土地より「明るく」して道路網を浮かせる */
-  road: '#ffffff',
-  roadCasing: '#e2e0e1',
-  /** 国道(trunk/primary)。土地より「暗い」青灰で幹線を目立たせる */
-  trunk: '#c3ccd8',
-  trunkCasing: '#aab4c2',
-  /** 県道(secondary/tertiary)。国道より淡い青灰 */
-  arterial: '#d5dde5',
-  arterialCasing: '#bcc5cf',
+  /**
+   * 生活道路。
+   *
+   * 街区より「暗い」薄い青灰にする。実測すると Google は
+   * 街区 #f3f3f3 に対し生活道路 #e2e7ed 前後で、
+   * 白い街区に薄いグレーの道路網を描く形になっている。
+   * 逆にすると（白い道路＋グレーの街区）道路だけが浮いて
+   * 見慣れた地図と印象が変わってしまう。
+   */
+  road: '#ecf0f4',
+  roadCasing: '#e0e5ec',
+  /** 国道(trunk/primary)。階層が上がるほど濃い青灰にする */
+  trunk: '#d2d9e3',
+  trunkCasing: '#bcc5d1',
+  /** 県道(secondary/tertiary)。実測値 #e3e6ed に合わせる */
+  arterial: '#e3e6ed',
+  arterialCasing: '#ccd3dc',
   /** 高速道路のみ橙系を残す */
   motorway: '#f9d79f',
   motorwayCasing: '#efb96a',
